@@ -1,0 +1,92 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{assi2013}
+Assi, G.R.S., Bearman, P.W., Carmo, B.S., Meneghini, J.R., Sherwin, S.J.,
+  Willden, R.H.J.: The role of wake stiffness on the wake-induced vibration of
+  the downstream cylinder of a tandem pair.
+\newblock Journal of Fluid Mechanics \textbf{718}, 210–245 (2013).
+\newblock \doi{10.1017/jfm.2012.606}
+
+\bibitem{assi2010}
+ASSI, G.R.S., BEARMAN, P.W., MENEGHINI, J.R.: On the wake-induced vibration of
+  tandem circular cylinders: the vortex interaction excitation mechanism.
+\newblock Journal of Fluid Mechanics \textbf{661}, 365–401 (2010).
+\newblock \doi{10.1017/S0022112010003095}
+
+\bibitem{bearman2011}
+Bearman, P.W.: Circular cylinder wakes and vortex-induced vibrations.
+\newblock Journal of Fluids and Structures \textbf{27}(5), 648--658 (2011)
+
+\bibitem{bokaian1984}
+Bokaian, A., Geoola, F.: Wake-induced galloping of two interfering circular
+  cylinders.
+\newblock Journal of Fluid Mechanics \textbf{146}, 383–415 (1984).
+\newblock \doi{10.1017/S0022112084001920}
+
+\bibitem{Luchini2007}
+Giannetti, F., Luchini, P.: {Structural sensitivity of the first instability of
+  the cylinder wake}.
+\newblock Journal of Fluid Mechanics \textbf{581}, 167--197 (2007)
+
+\bibitem{1981323}
+Igarashi, T.: Characteristics of the flow around two circular cylinders
+  arranged in tandem : 1st report.
+\newblock Bulletin of JSME \textbf{24}(188), 323--331 (1981).
+\newblock \doi{10.1299/jsme1958.24.323}
+
+\bibitem{Jaiman2011}
+Jaiman, R.K., Geubelle, P., Loth, E., Jiao, X.: Transient fluid-structure
+  interaction with non-matching spatial and temporal discretizations.
+\newblock Computers and Fluids \textbf{50}, 120--135 (2011)
+
+\bibitem{Juang1985}
+Juang, J.N., Pappa, R.S.: {An Eigensystem Realization Algorithm for Modal
+  Parameter Identification and Model Reduction}.
+\newblock J. Guidance \textbf{8}(5), 620--627 (1985)
+
+\bibitem{MYSA201727}
+Mysa, R., Law, Y., Jaiman, R.: Interaction dynamics of upstream vortex with
+  vibrating tandem circular cylinder at subcritical reynolds number.
+\newblock Journal of Fluids and Structures \textbf{75}, 27 -- 44 (2017).
+\newblock \doi{https://doi.org/10.1016/j.jfluidstructs.2017.08.001}.
+\newblock
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S0889974616303929}
+
+\bibitem{Mysa2016}
+Mysa, R.C., Kaboudian, A., Jaiman, R.K.: {On the origin of wake-induced
+  vibration in two tandem circular cylinders at low {R}eynolds number}.
+\newblock Journal of Fluids and Structures \textbf{61}, 76--98 (2016)
+
+\bibitem{sarpkaya2004}
+Sarpkaya, T.: A critical review of the intrinsic nature of vortex-induced
+  vibrations.
+\newblock Journal of Fluids and Structures \textbf{19}(4), 389--447 (2004)
+
+\bibitem{Williamson2004}
+Williamson, C.H.K., Govardhan, R.: Vortex-induced vibrations.
+\newblock Annual Review of Fluid Mechanics \textbf{36}, 413--455 (2004)
+
+\bibitem{yao_jfm_2}
+Yao, W., Jaiman, R.K.: Feedback control of unstable flow and vortex-induced
+  vibration using the eigensystem realization algorithm.
+\newblock Journal of Fluid Mechanics \textbf{827}, 394–414 (2017).
+\newblock \doi{10.1017/jfm.2017.470}
+
+\bibitem{yao_jfm_1}
+Yao, W., Jaiman, R.K.: Model reduction and mechanism for the vortex-induced
+  vibrations of bluff bodies.
+\newblock Journal of Fluid Mechanics \textbf{827}, 357–393 (2017).
+\newblock \doi{10.1017/jfm.2017.525}
+
+\bibitem{ZDRAVKOVICH1987239}
+Zdravkovich, M.: The effects of interference between circular cylinders in
+  cross flow.
+\newblock Journal of Fluids and Structures \textbf{1}(2), 239 -- 261 (1987)
+
+\end{thebibliography}
