@@ -1,0 +1,2628 @@
+% This is file JFM2esam.tex
+% first release v1.0, 20th October 1996
+%       release v1.01, 29th October 1996
+%       release v1.1, 25th June 1997
+%       release v2.0, 27th July 2004
+%       release v3.0, 16th July 2014
+%   (based on JFMsampl.tex v1.3 for LaTeX2.09)
+% Copyright (C) 1996, 1997, 2014 Cambridge University Press
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% package include 
+
+
+\documentclass{jfm}
+\usepackage{graphicx}
+
+\usepackage{epstopdf, epsfig}
+\usepackage{color,soul} %highlight with color
+\graphicspath{{./figures_num/}} % Specifies the directory where pictures are stored
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage{subfloat}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{tikz}
+%\usepackage{pgfplots}
+%\usepackage{amsbsy}
+%\usepackage{amsfonts}
+%\usepackage{booktabs,array,dcolumn} 
+%\usepackage{ulem}
+
+%%======================New commands============================================
+\newcommand{\todo}[1]{\textcolor{magenta}{#1}}
+\newcommand{\changes}[1]{\textcolor{magenta}{#1}}     %%defined a new function to trace changes by modfiy font color
+\def\vec#1{\mbox{\boldmath $#1$}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bnx}{\mathbf{n_x}}
+\newcommand{\bny}{\mathbf{n_y}}
+\newcommand{\bs}{\boldsymbol{\sigma}}
+\newcommand{\disnum}[1]{\texttt{#1}}
+\def\Otf{\Omega^\mathrm{f}(t)}
+\def\Ots{\Omega^\mathrm{s}(t)}
+\def\Of{\Omega^\mathrm{f}}
+\def\Os{\Omega^\mathrm{s}}
+\def\bz{\mathbf z}
+\newcommand{\xx}{\mbox{$\mathbf{x}^{\mathrm{f}}$}}
+\def\strain{\vec \epsilon}
+\def\stress{{\vec \sigma}}
+\def\div{\vec \nabla}
+\def\G{\Gamma}
+\def\vphi{\vec{\varphi}^\mathrm{s}}
+\newcommand{\bchi}{\mathbf{\chi}}
+
+\usepackage{environ}
+\NewEnviron{myequation}{%
+\begin{equation}
+\scalebox{0.7}{$\BODY$}
+\end{equation}
+}
+%\newcommand{\hwplotA}{\raisebox{2pt}{\tikz{\draw[thick,dash dot] (0,1) -- (5,1);}}}
+\newcommand{\reddashdot}{\raisebox{2pt}{\tikz{\draw[red,dashdotted,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\bluedashdot}{\raisebox{2pt}{\tikz{\draw[blue,dashdotted,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\greendashdot}{\raisebox{2pt}{\tikz{\draw[green,dashdotted,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\greendash}{\raisebox{2pt}{\tikz{\draw[green,dashed,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\greensolid}{\raisebox{2pt}{\tikz{\draw[green,solid,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\reddash}{\raisebox{2pt}{\tikz{\draw[red,dashed,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\reddot}{\raisebox{2pt}{\tikz{\draw[red,dotted,line width=1.2pt](0,0) -- (5mm,0);}}}
+%\usepackage{placeins}
+%\usepackage{tabularx}
+%\usepackage{epstopdf}
+%\usepackage{afterpage}
+%%=======================================================================================
+
+% For multiletter symbols
+%\newcommand\Real{\mbox{Re}} % cf plain TeX's \Re and Reynolds number
+%\newcommand\Imag{\mbox{Im}} % cf plain TeX's \Im
+%\newcommand\Rey{\mbox{\textit{Re}}}  % Reynolds number
+%\newcommand\Pran{\mbox{\textit{Pr}}} % Prandtl number, cf TeX's \Pr product
+%\newcommand\Pen{\mbox{\textit{Pe}}}  % Peclet number
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\shorttitle{Model Reduction and Mechanism of VIV}
+\shortauthor{W. Yao and R. K. Jaiman}
+
+\title{Model Reduction and Mechanism for the Vortex-Induced Vibrations of Bluff Bodies}
+
+\author{W. Yao
+  \and  R. K. Jaiman
+   \corresp{\email{mperkj@nus.edu.sg}}
+  }
+ 
+\affiliation{Department of Mechanical Engineering, National University Singapore, Singapore 119077}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present an effective reduced-order model (ROM) technique to couple 
+an incompressible flow with a transversely vibrating bluff body in a state-space format.
+%
+The ROM of unsteady wake flow is based on the Navier-Stokes equations 
+and is constructed by means of eigensystem realization algorithm (ERA).
+%
+We investigate the  underlying mechanism of vortex-induced vibration (VIV) 
+of a circular cylinder at low Reynolds number via linear stability analysis.
+%
+To understand the frequency lock-in mechanism and self-sustained VIV phenomenon, 
+a systematic analysis is performed by examining the eigenvalue trajectories  
+of ERA-based ROM for a range of reduced oscillation frequency $(F_s)$, 
+while maintaining fixed values of Reynolds number ($Re$) and mass ratio ($m^*$).
+%
+The effects of Reynolds number $Re$, the mass ratio $m^*$ and the rounding of square cylinder 
+are examined to generalize the proposed ERA-based ROM for the VIV lock-in analysis.  
+The considered cylinder configurations are the basic square with sharp corners, 
+circle and three intermediate rounded squares, which are created 
+by varying a single rounding parameter. 
+%
+Results show that the two frequency lock-in regimes, the so-called 
+\emph{resonance} and \emph{flutter},  
+only exist when certain conditions are satisfied and the regimes 
+have a strong dependence on the shape of bluff body, Reynolds number and the mass ratio. 
+%
+In addition, the frequency lock-in during VIV of square cylinder 
+is found to be dominated by the resonance regime without any coupled mode 
+flutter at low Reynolds number. 
+%
+To further discern the influence of geometry on the VIV lock-in mechanism, we consider a smooth curve 
+geometry of ellipse and two sharp corner geometries of forward triangle and diamond-shaped 
+bluff bodies.
+%
+While the ellipse and diamond geometries exhibit the 
+flutter and mixed resonance-flutter regimes, the forward triangle undergoes only 
+the flutter-induced lock-in for $30 \le Re \le 100 $ at $m^*=10$.
+% galloping 
+In the case of forward triangle configuration, the ERA-based ROM accurately predicts 
+the low-frequency galloping instability. We observe a kink in the amplitude 
+response associated with 1:3 synchronization whereby 
+the forward triangular body oscillates at a single dominant frequency but the lift force 
+has the frequency component at three times of the body oscillation frequency. 
+%
+Finally, we present a stability phase diagram to summarize 
+the VIV lock-in regimes of the five smooth curve and sharp-cornered based bluff bodies.
+%
+These findings attempt to generalize our understanding of VIV lock-in mechanism 
+for bluff bodies at low Reynolds number.
+%
+The proposed ERA-based ROM is found to be accurate, efficient 
+and ease-of-use for the linear stability analysis of VIV and it can have a profound 
+impact on the development of control strategies for nonlinear vortex shedding and VIV.
+\end{abstract}
+
+\begin{keywords}
+vortex-induced vibration, low-dimensional models, unstable wake flow
+\end{keywords}
+
+\section{Introduction}\label{sec:intro}
+
+
+\subsection{Vortex-induced vibration}
+%% definition of VIV 
+Vortex shedding from a bluff body and the vortex-induced vibration (VIV) are ubiquitous 
+and have a broad range of applications in numerous fields such 
+as offshore, wind and aerospace engineering. Apart from their great practical 
+importance, these phenomena in fluid mechanics have a fundamental value 
+due to the vast richness of their vorticity dynamics and coupled nonlinear physics.
+Asymmetric vortex shedding shed from a bluff 
+body causes a large unsteady transverse load, which in turn may lead to structural 
+vibrations when the structure is free 
+to vibrate in the transverse direction (\cite{sarpkaya2004,williamson2004,bearman2011}). 
+These large vortex-induced vibrations can lead to damage and potential risk to the structures, 
+in particular for ocean structures such as marine risers, subsea pipelines and cables.
+%
+When the natural frequency of the structure is close the vortex shedding frequency, 
+the phenomenon of VIV results into a complex evolution of the shedding frequency, which 
+deviates from the Strouhal relation of stationary counterpart. In this 
+frequency lock-in regime, the vortex formation locks on to the natural frequency of body 
+within a range of the Strouhal frequency and there exists a strong coupling 
+between the fluid and the structure \citep{sarpkaya2004}. Such frequency lock-in 
+phenomenon leads to high amplitude and self-sustained vibrations, thus there is a need 
+to understand the origin and different regimes during the lock-in process. 
+%
+The lock-in process is self-excited and is characterized by the matching of the frequency 
+of periodic vortex shedding and the oscillation frequency of the body \citep{khalak1999}.
+%
+%
+
+%% VIV research 
+The flow over a single elastically  mounted two-dimensional bluff body has served as a 
+generic VIV model for both numerical and experimental investigations.
+%
+In this canonical configuration, it is often convenient to consider the elastically mounted 
+cylinder as two coupled oscillators whereby one system is the oscillating body and the other one is 
+the wake.
+%
+Numerous studies have been conducted to understand the frequency lock-in phenomenon 
+for this simplified fluid-structure system. This VIV model problem 
+manifests a complex dynamical behavior, which is still subject of active research 
+over the past decade \citep{williamson2004,bearman2011}.
+%
+Apart from the fundamental physics 
+of a single cylinder VIV \citep{Blackburn1999,Shiels2001,Singh2005,Leontini2006}, 
+the topics for numerical investigations range from the development of coupling procedures for 
+the Navier-Stokes and the structural equations 
+(\cite{He2012}, \cite{Jaiman2015}, \cite{Jaiman2016a}, \cite{Jaiman2016b}), 
+to the modeling of near wall proximity effects \citep{Tham2015}, 
+multiple-cylinder arrangements \citep{Mysa2016,Liubin2016}, 
+and suppression devices \citep{Yu2015,Law2017}. 
+High-fidelity computational fluid dynamics (CFD) can reveal a vast amount of 
+physical insight in terms of vorticity distribution, the force dynamics, 
+the frequency characteristics and phase relations, 
+and the shape of VIV trajectory. Despite improved algorithms and powerful supercomputers,
+the state-of-art CFD-based VIV simulation 
+is less attractive with regard to parametric optimization 
+and the development of control strategies.
+%
+The primary motivation behind the present work is: 
+(i) to develop an efficient low-order model for the VIV lock-in of
+a circular-shaped bluff body, and (ii) to generalize the eigenvalue analysis of 
+VIV lock-in mechanism for other two-dimensional bluff bodies.
+
+\subsection{VIV mechanism and control}
+%% VIV mechanism 
+A simple interpretation of frequency lock-in during VIV is attributed 
+to the classical resonance or synchronization with a well-defined frequency. 
+Structural response amplitude gradually should grow as the structure 
+natural frequency $f_{N}$ approaches 
+the alternate vortex shedding frequency $f_{vs}$, and should attain its 
+maximum value when $f_N/f_{vs} \approx 1$. 
+However, VIV simulations (\cite{Singh2005,Tham2015}) at $Re=100$ reveal that 
+the circular cylinder acquires the maximum amplitude at $f_N/ f_{vs} \approx 1.3$ or in the vicinity 
+of VIV lock-in onset, which is not consistent with the simple resonance interpretation. 
+Therefore, the classical resonance is not adequate to interpret the underlying VIV lock-in mechanism 
+and the large amplitude during the lock-in process. 
+%
+Through a linear global stability analysis of the flow past an elastically-mounted 
+cylinder, \cite{cossu2000} identified two modes in the fluid-structure 
+system, namely nearly structural mode and the von Karman wake mode.
+% 
+\cite{DeLangre2006} investigated the mechanism of lock-in to a coupled mode 
+flutter by using a simple linear wake-oscillator model 
+for a transversely vibrating circular cylinder. 
+%
+The VIV analysis in \cite{DeLangre2006} was performed 
+by considering an empirical wake oscillator model while 
+neglecting nonlinear and viscous terms. 
+%
+Analogous to plunging and pitching instability of airfoil in the classical aeroelasticity, 
+\cite{DeLangre2006} attributed the root cause of VIV lock-in to the mode coupling between 
+the transverse periodic motion and the continuous rotation of the separation point 
+along the smooth contour of circular cylinder. 
+
+
+Using a standard asymptotic analysis, \cite{meliga2011} confirmed the existence of 
+the two modes identified by \cite{cossu2000} and termed them as the wake mode (WM) 
+and structure mode (SM). For weak fluid-structure interaction in the limit 
+of large solid-to-fluid mass ratio, the eigenvalue of wake mode was found to be similar 
+to the leading eigenvalue computed for the flow past a fixed cylinder whereas
+the eigenvalue of the SM approached to the natural eigenvalue
+of the cylinder-only system.
+%It is common practice to utilize linear reduced order 
+%model (ROM) for aeroelastic system stability analysis (\cite{Silva2005}). 
+Inspired by the semi-analytical finding of \cite{DeLangre2006},
+\cite{Zhang2015} recently employed 
+a linear ROM-based CFD method 
+to provide further evidence of the frequency lock-in phenomenon 
+of circular cylinder at $Re=60$, and two regimes have been confirmed 
+in the VIV response, namely \emph{resonance-induced lock-in} and \emph{flutter-induced lock-in}. The 
+resonance regime is related to the vorticity dynamics of wake flow, whereas the 
+flutter regime may be interpreted as an inertial coupling between 
+the structure and global wake flow.
+% Mittal paper 
+In another recent work of \cite{mittal2016}, the lock-in phenomenon has been 
+investigated via a linear stability and direct time integration and two leading 
+eigenmodes referred to as the fluid mode and the elastic mode were classified 
+for a transversely vibrating circular cylinder. These two leading 
+modes were found to have a strong coupling for low mass ratios and a clear 
+demarcation of the fluid (wake) mode or elastic (structure) mode was found to be 
+non-trivial. As opposed to the decoupled modes (WM and SM) for high mass ratios, 
+these modes were termed as coupled modes for low mass ratios \citep{mittal2016}.
+
+
+Owing to the complexity of VIV with regard to fluid-structure interaction, 
+a unified description of the frequency lock-in still remains unclear 
+for arbitrary shaped bluff bodies and general physical conditions.
+%
+Of particular interest of this study is to understand some elementary aspects of the self-sustained VIV oscillations  by considering a linear aspect of the lock-in process. 
+The linear instability plays a key role in the origin of self-sustain VIV oscillation arising 
+from coupled fluid-structure system. Once the fluid-structure system rises to  
+a high-amplitude VIV response, 
+the nonlinearity begins to dominate and the system transforms 
+into a fully developed (self-limiting) limit-cycle state.
+%
+Some key questions with regard to the generality of 
+VIV lock-in process have remained unexplained, such as:
+How does the geometry of bluff body influence the frequency lock-in in VIV? Why the VIV behavior of square cylinder is different from its circular counterpart? 
+Do the resonance and flutter regimes exist always or the regimes are actually 
+influenced by the Reynolds number and the geometry of bluff body? 
+In this article, we attempt to answer these questions 
+and understand more general aspects of linear VIV mechanism 
+via our proposed ERA-based ROM procedure.     
+%
+
+An understanding of VIV mechanism can help in developing flow control techniques 
+based on both passive and active control schemes, 
+whereby the passive schemes require no energy input and  the active schemes 
+rely on continuous energy input. 
+%
+Owing to the complexity of VIV, the control schemes are generally 
+ad-hoc and a good understanding of the dynamical behavior 
+with respect to the flow and structure parameters is required.
+%
+%% linear stability analysis 
+%As discussed earlier, the VIV is a nonlinear unsteady phenomena and is characterized by alternate vortex shedding. 
+Although a high-fidelity CFD model is able to resolve physical feature of interest, a linear model based on the model reduction provides a way to perform stability analysis for the flow past a bluff body and to design active control strategies (\cite{Marquet2008}, \cite{Thompson2014}, \cite{Mettot2014}, and \cite{Flinois2016}). 
+Two ways exist to derive a linear model of original nonlinear system. 
+While the first one is to derive a linear governing equation and then discretize the system of equations, the second approach is to discretize the nonlinear model first and 
+then to obtain the linear model from it. 
+The latter method is widely used in the aeroelastic research community to construct the linear model by automatic differencing method. 
+However, both types of methods are expensive and are not attractive 
+for parametric study and the development of VIV control strategies. 
+%
+A low-order model based on minimal state-space dimension has a potential to 
+become a practical alternative to understand the VIV mechanism and 
+to design a proper control procedure. A model-based control design can help to 
+regulate and stabilize alternate vortex formation and the near-wake dynamics.
+%
+Such model relies on the smallest state-space dimension of realized systems that 
+have the similar input-output relations within a specified degree of precision. 
+As shown in \cite{HoKalman1966} that the minimum problem represents  
+the problem of identifying the sequence of real matrices, also known as the Markov parameters, 
+based on the impulse response of a dynamic system.
+%
+
+\subsection{Model order reduction}
+% Model reduction 
+Model order reduction (MOR) technique is to approximate original full order (high dimensional) 
+system with a low order model, which retains the significant dynamics of 
+the original system and provides order of magnitude efficiency improvement 
+to construct the essential dynamics of the system. 
+%
+As discussed in \cite{Flinois2016}, we can categorize the previous studies on the linear model 
+order reduction into two main approaches. 
+%
+The first ROM construction approach is based on Galerkin projection of full 
+order system onto a small subspace spanned by mode vectors. 
+The mode vector can be obtained by proper orthogonal decomposition (POD), balanced 
+truncation (\cite{Moore1981}), or dynamic mode decomposition 
+(DMD)(\cite{rowley2009,schmid2010}).
+%
+One of the drawbacks of conventional POD/Galerkin models is that while they capture 
+the most energetic modes based on a user-defined energy norm, low-energy features may be
+crucial to the dynamics of underlying problem.
+%
+As compared to the POD method, which only extracts modes 
+from the snapshots of the primary system, the balance truncation method derives the modes 
+by collecting the snapshots of both primary and adjoint systems. This feature of 
+the balance truncation method allows to identify the modes which are dynamically important. 
+Based on the work of \cite{Moore1981}, \cite{Willcox2002} and \cite{Rowley2005} further extended the balance truncation concept 
+to a large system by approximating the system observable and controllable Gramians 
+via two sets of snapshots from a linearized forward simulation 
+and a companion adjoint simulation. 
+This algorithm is usually referred to as the balanced proper orthogonal decomposition (BPOD) 
+and provides two sets of modes, namely primal and adjoint modes. 
+%The BPOD retains the most dynamically relevant observable and controllable modes and usually is considered superior over the POD method
+%{\color{red} as far as linear model is considered. }
+
+%A linear representation of flow equations is typically 
+%necessary to apply Galerkin projection, which can be quite cumbersome 
+%to obtain from the existing flow solver.
+%
+The second approach is based on the system identification method, which  only requires 
+input and output information and considers the original system as a black box via input-output 
+dynamical relationship. From a time-domain formulation and the realization of a state-space 
+model, a ROM of dynamic system can be constructed on the basis of input-output data.
+%
+One of widely used system identification methods is the eigensystem realization algorithm (ERA)
+introduced by \cite{Juang1985} for the model reduction using a 
+Hankel matrix based decomposition.
+ERA essentially extends the well-known algorithm of \cite{HoKalman1966} in control theory  
+and creates a minimal realization that follows the evolution of system output 
+when it is subjected to an impulse input.
+%
+In a recent theoretical study, \cite{Ma2011} proves that 
+the ERA constructs a ROM which is mathematically equivalent to the BPOD method. 
+With regard to recent fluid dynamics applications, the ERA has been considered for unsteady problems by \cite{Flinois2016,Yao2015}.
+
+The aforementioned methods are originally developed for stable linear systems. 
+%
+Extensions  have been made to circumvent this restriction 
+of the model reduction for unstable systems by either 
+partitioning the unstable and stable subspace or inverting the large linear system 
+\citep{barbagallo2009,Ahuja2010,Dergham2011}.
+%
+In one of the recent work by \cite{Flinois2015}, 
+a theoretical analysis was presented to show 
+that the unmodified balance truncation (designed for stable systems)
+method can be applied to an unstable system.
+%
+Following this analysis and the work of \cite{Ma2011}, the ERA is recently employed 
+for the active control of unstable wake behind a bluff body (\cite{Flinois2016}). 
+Compared to the ROM method used in \cite{Zhang2015}, 
+which lacks a mathematical rigor and is highly sensitive to training trajectory, 
+the ERA has a theoretical foundation for unstable linear systems generated by 
+the unsteady wake dynamics and vortex-induced vibrations. 
+Therefore, following \cite{Flinois2015} and the finding of \cite{Ma2011}, 
+the ERA is adopted in this paper to construct the low-order fluid model.
+
+
+\subsection{Contributions and organization}
+In this work, we present a physical insight and the 
+underlying mechanism of vortex-induced vibration 
+by exploiting a unified description of frequency lock-in during elastically mounted cylinders. 
+We introduce the ERA-based ROM  to capture just enough physics 
+to extract the stability properties of the fluid-structure system
+of two-dimensional bluff bodies consisting of sharp corners and smooth curves. 
+%
+Of particular interest is to provide a generalized description 
+of these frequency lock-in regimes at low Reynolds numbers via model reduction technique. 
+Unlike the wake-oscillator model, the present technique does not rely on any empirical formulation and captures naturally the physical effects related to the 
+added mass and damping forces through the solution of the Navier-Stokes equations.
+%based on input-output dynamics.
+%%
+%We construct the low-order model for fluid-structure interaction based on the ERA (\cite{Juang1985}).
+We first employ the ERA-based ROM for unstable wake flow over a stationary circular cylinder 
+and predict the critical Reynolds number $Re_{cr}$ of vortex shedding. 
+%%
+We then perform the stability analysis of fluid-structure system via the ERA-based ROM to analyze
+the effects of Reynolds number $Re$, the mass ratio $m^*$ and the rounding of square cylinder.
+To examine the accuracy and reliability of the low-order model, we assess the ROM results 
+against the full-order simulations 
+%based on the body-conforming Lagrangian-Eulerian coupling for fluid-structure interaction. 
+%The full-order simulations are 
+performed by the variationally coupled Navier-Stokes and rigid body equations.
+
+%
+We will show in this paper that the two frequency lock-in regimes associated 
+with \emph{resonance} and \emph{flutter} characteristics 
+only exist when certain conditions are satisfied. These regimes 
+have a strong dependence on the shape of the bluff body, the Reynolds number and the mass ratio.
+The presence of sharp corners on a square cylinder largely alters the VIV lock-in
+characteristics as compared to the circular counterpart with smooth curves.
+%
+We report that the frequency lock-in of the square cylinder 
+is found to be dominated by the \emph{resonance} regime without any coupled mode 
+flutter at low Reynolds number ($Re \le 80$). This indicates that the previous theoretical finding by \cite{DeLangre2006} on the root cause of frequency lock-in due to
+the coupled flutter does not hold for a transversely vibrating sharp-cornered square cylinder.
+%
+Apart from the frequency lock-in regimes, we qualitatively 
+visualize the spatio-temporal evolution of vortex shedding and leading eigenmodes 
+to link the lock-in process with the intrinsic wake dynamics.
+%%
+To understand the influence of geometry on the frequency lock-in regimes,
+we present a stability phase diagram for five two-dimensional bluff bodies 
+namely, circle, square, ellipse, forward triangle and diamond.
+%
+Compared to the circular cylinder, we show that the flutter mode is pronounced in the elliptical cylinder  
+while the lock-in/synchronization is galloping-dominated for the forward triangle configuration.
+%
+The proposed ERA-based ROM is general and efficient for 
+fluid-structure systems without the need for a linearized flow or an adjoint solver, 
+which allows the method to be even applicable for physical experiments. 
+
+%
+The paper is structured as follows: Section 2 introduces the full order model, the 
+state-space formulation for the model reduction and 
+the eigensystem realization algorithm for the wake flow and vortex-induced vibration.
+Section 3 describes the VIV problem set-up and presents the convergence and  
+the numerical verification of the ERA-based ROM model. 
+The systematic analysis of frequency lock-in mechanism 
+as a function of Reynolds number and the effects of rounding and geometry are provided in Section 4. 
+Concluding remarks are presented in Section 5. 
+
+\section{Numerical methodology}\label{sec:method}
+For the sake of completeness, we first summarize the formulation for high-dimensional 
+full order model (FOM) 
+and describe the implementation of the numerical schemes used for the coupled variational fluid-structure solver. 
+Later we present the ERA 
+for the construction of reduced-order model (ROM) using the Navier-Stokes 
+and rigid-body equations.
+\subsection{Full order model formulation}
+To study the interaction of elastically mounted cylinder with the fluid, 
+we consider a variational fluid formulation based on 
+the arbitrary Lagrangian-Eulerian (ALE) description 
+and the semi-discrete time stepping \citep{Jaiman2015,Liu2014}. 
+%
+Consider the fluid domain $\Otf$ with the spatial and temporal coordinates 
+denoted by $\xx$ and $t$, respectively.
+%
+The Navier-Stokes (NS) equations governing an incompressible flow  
+in the ALE reference frame are
+%
+\begin{align}
+\rho^\mathrm{f} \left( \frac{\partial \bu^\mathrm{f}}{\partial t} \bigg\rvert_{\bchi} + \left(\bu^\mathrm{f}-\bw\right)\cdot \boldsymbol{\nabla} \bu^
+\mathrm{f} \right )= \boldsymbol{\nabla} \cdot \boldsymbol{\sigma}^\mathrm{f} + \mathbf{b}^\mathrm{f} \mbox{ on } \Otf \label{eq:N-S}, \\
+\boldsymbol{\nabla} \cdot\bu^\mathrm{f} = 0 \mbox{ on } \Otf \label{eq:continuity},
+\end{align}
+where $\rho^\mathrm{f}$, $\bu^\mathrm{f}$, 
+$\bw$, $\boldsymbol{\sigma}^\mathrm{f}$, and $\mathbf{b}^\mathrm{f}$ 
+are the fluid density, the fluid velocity, the ALE mesh velocity, the 
+Cauchy stress tensor and the body force per unit mass, respectively. 
+%
+For the partial time derivative in Eq. (\ref{eq:N-S}), 
+the ALE referential coordinate $\bchi$ is held fixed and for a Newtonian fluid
+$\boldsymbol{\sigma}^\mathrm{f}$ is defined as
+\begin{equation}
+\boldsymbol{\sigma}^\mathrm{f} = -p\mathbf{I} + \mu^\mathrm{f}\left(\boldsymbol{\nabla} \bu^\mathrm{f} + \left(\boldsymbol{\nabla} \bu^\mathrm{f}\right)^T
+\right),
+\label{eq:cauchyStress}
+\end{equation}
+%
+where $p$, $\mu^\mathrm{f}$ and $ \mathbf{I} $ are the  pressure, the dynamic viscosity of the fluid and an identity tensor, respectively.
+A rigid-body structure submerged in the fluid experiences unsteady fluid forces
+and consequently may undergo flow-induced vibrations if the body is mounted elastically. 
+To simulate translational motion of a two-dimensional rigid body about its center of mass, the Lagrangian motion along the Cartesian axes is given by:
+\begin{equation}
+\mathbf{m} \cdot\frac{d {\bu}^\mathrm{s}}{d t}+ \mathbf{c} \cdot{\bu}^\mathrm{s}+\mathbf{k} \cdot\left(\boldsymbol{\varphi}^\mathrm{s}
+\left(t\right)-\boldsymbol{\varphi}^\mathrm{s}
+\left(0\right)\right)=\mathbf{F}^\mathrm{s},
+\label{eq:rigid}
+\end{equation}
+\begin{align}
+{\bu}^\mathrm{s}\left(t\right) = 
+\frac{\partial \vec{\varphi}^\mathrm{s}}{\partial t}, 
+\end{align}
+where ${\bu}^\mathrm{s}\left(t\right)$ represents the velocity of immersed rigid body in the fluid domain, $\vec{\varphi}^\mathrm{s}\left(t\right)$ denotes
+the position of the center 
+of the rigid body at time $t$, and
+$\mathbf{m},\ \mathbf{c}$, $ \mathbf{k}$ are mass, damping and stiffness coefficient matrices for the translational motions. Here,
+ $\mathbf{F}^\mathrm{s}$ is 
+ fluid force on the rigid body.  
+ %and $\Ots$ represents the domain occupied by the rigid body.
+
+%The fluid and the structural equations are coupled by the continuity of velocity
+%and traction along the fluid-structure interface.
+%The new position of rigid body is updated through a position vector $\boldsymbol{\varphi}^\mathrm{s}$, which maps the initial position $\mathrm{\mathbf{z}}_0
+%$ of the rigid body to its new position at time $t$. 
+%Let $\Gamma=\partial\Of(0) \cap \partial\Os(0)$ be the fluid-structure
+%interface at $t=0$ and
+Let $\G(t)$ is the fluid-structure interface at time $t$,
+the coupled system requires to satisfy the continuity of velocity and 
+the force equilibrium at the fluid-body interface $\Gamma$ as follows
+\begin{align}
+{\bu}^\mathrm{f}\left(t\right) = {\bu}^\mathrm{s}\left(t\right) , 
+\label{eq:bcsVelocity} \\
+\int_{\G(t)} \boldsymbol{\sigma}^\mathrm{f}\left(\xx,t\right)\cdot\boldsymbol{\mathrm{n}} \mathrm{d} \Gamma
++ \vec{F}^\mathrm{s} =0 ,
+\label{eq:bcsTraction}
+\end{align}
+where $\boldsymbol{\mathrm{n}}$  is the outer normal to the fluid-body interface.
+%$\gamma$ is any part of the fluid-body interface $\Gamma$ in the reference configuration, 
+%$\mathrm{d} \Gamma$ denotes a differential surface
+%area and ${\boldsymbol{\varphi}^\mathrm{s}(\gamma,t)}$ is the corresponding fluid part at time $t$. 
+In Eq. (\ref{eq:bcsTraction}), the first term represents 
+the force exerted by the fluid  
+and the second term is the solid load vector applied in Eq.~(\ref{eq:rigid}).
+%
+The ALE mesh nodes on the fluid domain $\Omega^f(\xx,t)$ can be updated by solving a linear steady pseudo-elastic material model
+\begin{align}
+\label{MeshEq}
+\div \cdot \stress^\mathrm{m} = \vec{0}, \qquad \stress^\mathrm{m} = (1+k_\mathrm{m})\left[\left(\div \vec{\eta}^\mathrm{f}+\left(\div
+\vec{\eta}^\mathrm{f}\right)^T\right)+\left(\div \cdot \vec{\eta}^\mathrm{f}\right)\vec{\mathrm{I}} \right], 
+\end{align} 
+where $\stress^\mathrm{m}$ is the stress experienced by the ALE mesh due 
+to the strain induced by the rigid-body movement, 
+$\vec{\eta}^\mathrm{f}$ represents the ALE mesh node displacement and 
+$k_\mathrm{m}$ is a mesh stiffness variable chosen as a function of the element area to 
+limit the distortion of small elements located in the immediate vicinity 
+of the fluid-body interface.
+
+%
+The weak variational form of Eq.~(\ref{eq:N-S}) is discretized in space 
+using $\mathbb{P}_{n}/\mathbb{P}_{n-1}$ iso-parametric finite elements 
+for the fluid velocity and pressure, where 
+$\mathbb{P}_{n}$ denotes the standard $n^\mathrm{th}$
+order Lagrange finite element space on the discretized fluid domain. 
+%
+To satisfy the inf-sup condition, $\mathbb{P}_{2}/\mathbb{P}_{1}$ finite element 
+mesh is adopted and the second-order backward scheme is used for the time discretization 
+of the Navier-Stokes system \citep{Liu2014}. 
+In the present study, a partitioned staggered scheme is considered for the 
+full-order simulations of fluid-structure interaction \citep{Jaiman2011}.
+The motion of structure is driven by the traction forces exerted 
+by the flowing fluid at the fluid-structure interface $\Gamma$, whereby 
+the structural motion predicts the new interface position and the geometry changes 
+for the ALE fluid domain at each time step. The movement of
+the internal ALE fluid nodes is accommodated such that the mesh quality 
+does not deteriorate as the motion of solid structure becomes large.
+%
+The above coupled variational formulation completes the presentation 
+of full order model for the direct numerical simulation of fluid-structure interaction. 
+We next present a state-space formulation of the model reduction using 
+a system identification technique based on the input-output dynamics.
+%
+\subsection{Basic state-space formulation and model reduction}
+The linear time-invariant (LTI) and multiple-input multiple-output (MIMO) model represented in a state-space form 
+at discrete times $t=k\Delta t$, 
+$k=0,1,2,...,$ with a constant sampling time $\Delta t$ reads 
+\begin{equation}
+\left. \begin{array}{ll}
+
+\displaystyle \mathsfbi{x}_{r}(k+1)=\mathsfbi{A}_{r}\mathsfbi{x}_{r}(k)+\mathsfbi{B}_{r}\mathsfbi{u}(k)  \\[8pt]
+
+\displaystyle \mathsfbi{y}_{r}(k)=\mathsfbi{C}_{r}\mathsfbi{x}_{r}(k)+\mathsfbi{D}_{r}\mathsfbi{u}(k) 
+\end{array}\right\},
+ \label{eq:ERA_ROM}
+\end{equation}  
+where $\mathsfbi{x}_r$ is an $n_r$-dimensional state vector, 
+$\mathsfbi{u}$ denotes a $q$-dimensional input vector 
+and $\mathsfbi{y}_r$ is a $p$-dimensional output vector.  
+The integer $k$ is a sample index for the time stepping.
+%
+The system matrices are $\left(\mathsfbi{A}_r,\mathsfbi{B}_r,\mathsfbi{C}_r,\mathsfbi{D}_r\right)$, 
+whereby the transition matrix $\mathsfbi{A}_r$ characterizes the dynamics of the system.
+Here, $\mathsfbi{B}_r$, 
+$\mathsfbi{C}_r$ and $\mathsfbi{D}_r$ denote the input, output and 
+feed-through matrices, respectively. 
+For the given output vector $\mathsfbi{y}_r$, the statement of system realization 
+is to construct the system matrices $\left(\mathsfbi{A}_r,\mathsfbi{B}_r,\mathsfbi{C}_r,\mathsfbi{D}_r \right)$,
+such that the vector $\mathsfbi{y}_r$ is reproduced by the state-space model.
+In a discrete-time setting,
+the state-space realization matrices $\left(\mathsfbi{A}_{r},\mathsfbi{B}_{r},\mathsfbi{C}_{r},\mathsfbi{D}_{r} \right)$ 
+of the dynamical system are constructed by the ERA, 
+in which only the impulse response function (IRF) of the original full order system 
+is required for the system realization. The impulse response of full-order linear system is 
+first defined as 
+$\mathsfbi{y}=\left[\mathsfbi{y}_1,\mathsfbi{y}_2,\mathsfbi{y}_3,...,\mathsfbi{y}_{n_i}\right]$, 
+where $n_i$ represents the length of the impulse response 
+and $\mathsfbi{y}_i$ denotes IRF with the dimension $p \times q$ . 
+Based on the impulse response, the generalized block Hankel matrices $r\times s$  
+can be constructed as
+%%%%%%%%%
+\begin{equation}
+\mathsfbi{H}(k-1) = 
+\left[ {\begin{array}{*{20}c}
+    \mathsfbi{y}_{k+1}&     \mathsfbi{y}_{k+2}& ...& \mathsfbi{y}_{k+s}        \\    
+    \mathsfbi{y}_{k+2}& \mathsfbi{y}_{k+3}& ...& \mathsfbi{y}_{k+s+1}    \\
+    \vdots& \vdots& \ddots& \vdots        \\
+    \mathsfbi{y}_{k+r}& \mathsfbi{y}_{k+r+1}& ...&\mathsfbi{y}_{k+(s+r-1)}
+ \end{array} } \right].
+\label{eq:Hankel}
+\end{equation}  
+From the partitioned SVD of the Hankel matrix $\mathsfbi{H}(0)$, 
+we can have
+\begin{equation}
+\mathsfbi{H}(0) = \mathsfbi{U}\mathsfbi{\Sigma}\mathsfbi{V}^*=
+\left[\mathsfbi{U}_1 \quad \mathsfbi{U}_2\right]
+\left[{\begin{array}{*{20}c}
+   \mathsfbi{\Sigma}_1 \quad \mathsfbi{0} \\
+   \mathsfbi{0} \quad \mathsfbi{\Sigma}_2
+ \end{array} }
+\right]
+\left[{\begin{array}{*{20}c}
+  \mathsfbi{V}_1^* \\
+  \mathsfbi{V}_2^*
+ \end{array} }
+\right],
+\end{equation}
+where the diagonal matrix $\Sigma$ are the Hankel singular values (HSVs) $\sigma_{i}$, 
+which represents the dynamical significance through sorting 
+such that $\sigma_{1} \geq \ldots \geq \sigma_{n} \geq 0$. 
+The block matrix $\Sigma_2$ contains the zeros or 
+negligible elements. By truncating the dynamically less significant states, we estimate 
+$\mathsfbi{H}(0) \approx \mathsfbi{U}_1\mathsfbi{\Sigma}_1\mathsfbi{V}_1^*$.  
+The reduced system matrices
+$\left(\mathsfbi{A}_{r},\mathsfbi{B}_{r},\mathsfbi{C}_{r},\mathsfbi{D}_{r}\right)$ are then defined as
+\begin{equation}
+\left. \begin{array}{ll}
+
+\displaystyle \mathsfbi{A}_{r}=\Sigma^{-1/2}_{1}\mathsfbi{U}^{*}_{1}\mathsfbi{H}(1)\mathsfbi{V}_{1}\Sigma^{-1/2}_{1} \\
+\displaystyle \mathsfbi{B}_{r}=\Sigma^{1/2}_{1}\mathsfbi{V}^{*}_{1}\mathsfbi{E_m}   \\
+\displaystyle \mathsfbi{C}_{r}=\mathsfbi{E_t}^{*}\mathsfbi{U}_{1}\Sigma^{1/2}_{1}   \\    
+\displaystyle \mathsfbi{D}_{r}=\mathsfbi{y}_{1}
+\end{array}\right\}.
+ \label{eq:ERA_ROM_matrices}
+\end{equation}  
+%
+Here, $\mathsfbi{E_m}^*=\left[\mathsfbi{I}_q \quad \mathsfbi{0} \right]_{q\times N}$,
+$\mathsfbi{E_t}^{*}=\left[\mathsfbi{I}_p \quad \mathsfbi{0} \right]_{p \times M}$, where
+$N =s \times q$, $M =r \times p$, $\mathsfbi{I}_{p}$ and $\mathsfbi{I}_{q}$ are the identity matrices. 
+%
+We next present the ERA to construct the fluid ROM, which relies 
+on the incompressible NS equations to represent the dynamics of a
+small amplitude perturbation around the equilibrium base flow. 
+
+
+\subsection{ERA-based model reduction for VIV}
+In the present work, we only consider the transverse motion of cylinder in a flowing stream for the sake of simplicity.
+However, the formulation of ERA-based ROM is general for any fluid-structure system.
+%The fluid and the structure are coupled by the fact that the fluid velocity must 
+%be equal to the velocity of the cylinder at its surface. 
+%
+The cylinder is mounted on a spring system in the cross-flow direction, 
+which allows the cylinder to vibrate through unsteady lift comprising 
+of the pressure and shear stresses of the fluid. Owing to the direct solution of 
+the Navier-Stokes equations, the effects of added-mass and added damping forces are 
+implicitly captured in the present model.
+%
+To perform linear stability analysis, the fluid ROM constructed by ERA is coupled with 
+the linear structural model. 
+The nondimensional structural equation for a transversely vibrating cylinder with 
+one-degree-of-freedom can be written as  
+\begin{equation}
+{\ddot{Y} + 4\zeta\pi F_{s}\dot{Y} + (2\pi F_{s})^2 Y}=\frac{a_{s}}{m^{*}} C_{l},
+\label{eq:structure1}
+\end{equation}
+where $Y$ is the transverse displacement; $C_{l}$ is the lift coefficient, 
+$m^{*}$ and $\zeta$ are the ratio of the mass of the vibrating structure to the mass of the displaced fluid and the 
+damping coefficient, respectively; $F_{s}$ is the reduced natural frequency of the structure 
+defined as $F_{s}=f_{N}D/U = 1/U_r$, where $U_r$ is the reduced velocity which
+is alternative parameter to describe the frequency lock-in phenomenon. 
+Mass ratio $m^*$ is a key parameter for VIV lock-in and it is 
+defined as the ratio of vibrating structure  to the mass of displaced fluid.
+%
+The characteristics length scale factor  $a_{s}$ 
+is related to the geometry of body. For example, the values are 
+$a_{s}=\frac{2}{\pi}$ for a circular cylinder, and  $a_{s}=0.5$ 
+for a square cylinder. There exists a complex dynamical relation between 
+the transverse amplitude $Y$ and the lift force $C_{l}$. 
+%The influence of cylinder amplitude 
+%on the wake force and the added-mass force is non-trivial and highly nonlinear.
+%
+One of the main objectives of this work is to construct a state-space relationship between 
+the transverse force and the amplitude directly from the 
+NS equations subject to an impulse. We next proceed to the model reduction
+of fluid-structure system.
+
+The non-dimensional structural Eq. \mbox{(\ref{eq:structure1}) }
+can be cast into a state-space formulation as
+\begin{equation}
+ \dot{\mathsfbi{x_{s}}}=\mathsfbi{A_{s}}\mathsfbi{x_{s}}+\mathsfbi{B_{s}}C_l,
+\label{eq:state}
+\end{equation} 
+where the state matrices and vectors are
+\[ 
+	\mathsfbi{A_{s}}=\left[ \begin{array}{cc}
+	0 & 1\\
+	 -(2\pi F_{s})^2 &-4\zeta\pi F_{s}      
+ 	\end{array} \right], \quad
+ 	\mathsfbi{B_{s}}=\left[ \begin{array}{c}
+ 	0 \\
+ 	\frac{a_{s}}{m^{*}}
+	\end{array}  \right], \quad
+	\mathsfbi{x_{s}}=\left[ \begin{array}{c}
+ 	Y \\
+ 	\dot{Y}
+	\end{array}  \right].
+ \] 
+It is straightforward to solve Eq. (\ref{eq:state}) using a standard time-integrator (\cite{Yao2016_JFS}). In the present work, an exact state-space discretization of Eq. (\ref{eq:state}) is considered as follows:
+\begin{equation}
+\left. \begin{array}{ll}
+\displaystyle \mathsfbi{x_{s}}(k+1)=\mathsfbi{A_{sd}}\mathsfbi{x_{s}}(k)+\mathsfbi{B_{sd}}C_l(k),  \\[8pt]
+\displaystyle Y(k)=\mathsfbi{C_{sd}}\mathsfbi{x_{s}}(k)
+\end{array}\right\},
+\label{eq:discrete_structure}
+\end{equation}
+where the state matrices are $\mathsfbi{A_{sd}}=e^{\mathsfbi{A_{s}}\Delta t}$, $\mathsfbi{B_{sd}}={\mathsfbi{A_{s}}}^{-1}(e^{\mathsfbi{A_{s}}\Delta t}-\vec{\mathrm{I}})\mathsfbi{B_s}$ 
+at discrete times $t=k\Delta t$, 
+$k=0,1,2,...,$ with a constant sampling time $\Delta t$, $\vec{\mathrm{I}}$ is 
+an identity matrix with the same size of $\mathsfbi{A_{s}}$, and 
+$\mathsfbi{C_{sd}}=[1 \quad 0]$. 
+%
+Through the input-output dynamics, the fluid ROM is derived by the ERA method 
+as described in Eq. (\ref{eq:ERA_ROM}). 
+The input for the ROM  is the transverse displacement $Y$, and the output 
+is the lift coefficient $C_l$. The ERA-based ROM with the single-input and single-output (SISO) can reformulated as:
+\begin{equation}
+\left. \begin{array}{ll}
+
+\displaystyle \mathsfbi{x}_{r}(k+1)=\mathsfbi{A}_{r}\mathsfbi{x}_{r}(k)+\mathsfbi{B}_{r}Y(k),  \\[8pt]
+
+\displaystyle C_l(k)=\mathsfbi{C}_{r}\mathsfbi{x}_{r}(k)+\mathsfbi{D}_{r}Y(k).
+\end{array}\right\}
+ \label{eq:ERA_ROM2}
+\end{equation}  
+%
+Substituting Eq. (\ref{eq:ERA_ROM2}) to Eq. (\ref{eq:discrete_structure}), the resultant ROM can be expressed as
+\begin{equation}
+ \mathsfbi{x_{fs}}(k+1)=\left[ \begin{array}{cc}
+ \mathsfbi{A_{sd}}+\mathsfbi{B_{sd}}\mathsfbi{D_{r}}\mathsfbi{C_{sd}} & \mathsfbi{B_{sd}}\mathsfbi{C_{r}} \\
+ \mathsfbi{B_{r}}\mathsfbi{C_{sd}} & \mathsfbi{A_{r}}
+ 
+\end{array}  \right]\mathsfbi{x_{fs}}(k) =\mathsfbi{A_{fs}}\mathsfbi{x_{fs}}(k),
+\label{eq:vivrom}
+\end{equation} 
+where $\left(\mathsfbi{A}_{r},\mathsfbi{B}_{r},\mathsfbi{C}_{r},\mathsfbi{D}_{r}\right)$ 
+are the ROM matrices defined by the ERA method as given in Eq. (\ref{eq:ERA_ROM}) 
+and $\mathsfbi{A_{fs}}$ denotes the coupled fluid-structure matrix in the discrete state-space form,
+and $\mathsfbi{x_{fs}}=[\mathsfbi{x_{s}} \quad \mathsfbi{x}_r]^T$.
+%
+
+The present ERA-based ROM reproduces the 
+the input-output dynamics of the full order system.
+%
+The linear stability analysis of VIV system can be 
+expressed into an eigenvalue problem of Eq. (\ref{eq:vivrom}). 
+The eigenvalue distribution of coupled fluid-structure 
+matrix $\mathsfbi{A_{fs}}$ characterizes the stability of VIV system.   
+($\lambda, \widehat{\mathsfbi{x}}$) correspond to continuous-time 
+eigenvalue/eigenvectors 
+of $\mathsfbi{A_{fs}}$, whereby the spatial structure is characterized by the complex 
+vector field $\widehat{\mathsfbi{x}}$ and their temporal behavior by the complex scalar $\lambda$.
+%
+The stability analysis can be easily accomplished by tracing the trajectory of complex eigenvalue 
+$\lambda$ in the complex plane, whereby  $\widehat{\mathsfbi{x}}$ provides the spatial global modes 
+of the ROM.
+%
+Based on the leading global mode or least damped eigenvalue of ERA-based ROM, 
+we define growth (amplification) rate $\sigma$=Re$(\lambda)$ and frequency $f$=Im$(\lambda/2\pi)$.
+%
+The construction of the above ERA-based ROM model is computationally efficient as it only relies on 
+the impulse response of the FOM.
+While the aforementioned formulation is presented for the transverse-only vibration of 
+the structure, it is general for any coupled fluid-structure system.
+%
+After reviewing the mathematical formulation and ERA-based ROM technique, 
+we next present the numerical set-up and verification of our solver.
+
+%%%%%%%% CONVERGENCE STUDY
+
+\section{Numerical set-up and verification}\label{sec:convergence}
+
+\subsection{Problem definition}\label{sec:prob}
+Figure \ref{fig:schematic} shows a schematic diagram of the setup used in our simulation study 
+for an elastically mounted bluff body with various cross-sections in a flowing stream. 
+The coordinate origin is located at the geometric center of the bluff body.
+The streamwise and transverse directions are denoted $x$ and $y$, respectively.
+%
+A stream of incompressible fluid enters into the domain from an 
+inlet boundary $\mathrm{\Gamma_{in}}$ at a horizontal velocity $(u,v)=(U,0)$, where $u$ and $v$ 
+denote the streamwise and transverse velocities, respectively. 
+The bluff body with mass $m$ and characteristic diameter $D$ is mounted on a linear spring 
+in the transverse direction. The damping coefficient $\zeta$ is set to zero in the present work.
+%
+The computational domain and the boundary conditions are also illustrated 
+in figure \ref{fig:schematic}. 
+No-slip wall condition is implemented on the surfaces of the bluff body, and a traction-free
+boundary condition is implemented along the outlet $\mathrm{\Gamma_{out}}$
+while the slip wall condition is implemented on the top $\mathrm{\Gamma_{top}}$
+and bottom $\mathrm{\Gamma_{bottom}}$ boundaries.
+%
+The numerical domain extends from $-10D$ at the inlet to $30D$ at the outlet, 
+and from $-15D$ to $15D$ in the transverse direction.
+%
+Except stated otherwise, all positions and length scales are normalized by 
+the characteristic dimension $D$, velocities
+with the free stream velocity $U$, and frequencies with $U/D$.
+%
+The Reynolds number $Re$ of flow is based on the
+characteristic dimension $D$, kinematic viscosity of fluid 
+and free-stream speed $U$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+	 \centering
+	 \includegraphics[scale=0.8]{fig1}
+     \caption{Schematic diagram of a representative bluff body of 
+     elastically mounted cylinder in uniform horizontal flow. 
+     Computational domain and boundary conditions are shown.}
+\label{fig:schematic}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+    \includegraphics[scale=0.35]{fig2a}
+    \caption{}
+    \label{fig:mesh_left}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig2b}
+	\caption{}
+	\label{fig:mesh_right}
+	\end{subfigure}	
+        \caption{A representative finite element mesh with
+        $\mathbb{P}_{2}/\mathbb{P}_{1}$ discretization: 
+        (a) full domain discretization and
+        (b) close-up view of finite element mesh in the vicinity of the cylinder. 
+        All other meshes for different bluff body geometries are similarly created. }
+	\label{fig:mesh}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Linear stability analysis}\label{sec:linear}
+We verify the validity of our ERA-based ROM by investigating 
+the stability of laminar wake behind a two dimensional circular cylinder.
+%
+To study the mesh convergence for our simulation study, we consider 
+three representative discretizations $M1$, $M2$ and $M3$ 
+consisting of 9517, 22004, and 41132 $\mathbb{P}_{2}/\mathbb{P}_{1}$ 
+iso-parametric elements. 
+%
+A representative M2 mesh is shown in figure \ref{fig:mesh} and 
+the corresponding central square represents the fine mesh region around the cylinder body. 
+The mesh in the cylinder wake is appropriately refined to resolve 
+the alternate vortex shedding. 
+%
+The quality of mesh convergence is determined by the prediction of
+growth rate $\sigma$ and the frequency $f$ of fluid ROM for 
+the flow past a circular cylinder at $Re=60$. 
+The nondimensional time step size is $\Delta t=0.05$.  
+Based on the procedure described in the previous section, we next briefly describe 
+the process of extracting ROMs from the incompressible NS equations.
+
+%%%%%%%% Table for convergence 
+\begin{table}
+  \begin{center}
+  \begin{tabular}{l c c c c}
+       Mesh   & Nodes & Elements &  $\sigma $ &  $f$\\
+       $M1$   & 4834 & 9514 & 0.0479 &  0.1207\\
+      $M2$   & 11119 & 22004 & 0.0484 &  0.1207\\
+      $M3$   & 20731 & 41132 & 0.0483 &  0.1207
+  \end{tabular}
+  \caption{Mesh convergence study: comparison of growth rate and frequency for meshes M1, M2 and M3 
+  for the flow past a stationary circular cylinder at $Re=60$.}
+  \label{tab:mesh_conv}
+  \end{center}
+\end{table}
+ 
+
+%%%%%%%% figure for base flow
+\begin{figure}
+	 \centering
+	 \includegraphics[scale=0.45]{fig3}
+     \caption{Base flow of a stationary circular cylinder at $Re=60$; 
+     streamwise velocity contours are shown.
+     Contour levels are from -0.1 to 1.2 in the increment of 0.1 and the flow is from left to right.}
+\label{fig:base}
+\end{figure}
+
+The ERA-based ROM is constructed in the neighborhood of the base flow, 
+which is computed via fixed-point iteration 
+without the time dependent term in  Eq. (\ref{eq:N-S}).
+At $Re=60$ with $M2$ mesh, figure \ref{fig:base} shows the streamwise velocity 
+contours of the base flow  with a symmetric recirculation bubble.
+The bubble length (measured from the center of the cylinder) 
+is $L_w = 4.1$, which agrees reasonably well with the literature 
+($L_w = 4.2$, \cite{Luchini2007}; $L_w = 4.1$, \cite{Mao2014}).  
+% ERA construction 
+The Hankel matrix shown in Eq. (\ref{eq:Hankel}) is obtained 
+from the output lift signal ($C_l$) subject to the impulse input of transverse displacement $Y$.
+A sufficiently small amplitude ($\delta=10^{-4}$) is considered
+such that the flow evolves linearly for a relatively large time.
+To ensure that the unstable modes start to dominate the essential dynamics 
+of the input-output relationship, an adequate number of cycles is required 
+to capture the linear dynamics of the system. However, 
+the excessively simulation time should be avoided before 
+the nonlinearity appears via exponential growth of the unstable modes. 
+
+The linearity of the unstable system is 
+confirmed by comparing the response subject to the two impulse inputs with $\delta=10^{-4}$ and 
+$\delta=10^{-3}$. A set of $1000$ impulse response outputs ($C_l$) is then stacked at each time step $\Delta t=0.05$, resulting the final simulation time $tU/D=50$. 
+The adequate simulation cycles are then determined by examining the convergence of the 
+fluid unstable eigenvalues computed from the Hankel matrices with the dimensions of
+$500 \times 20$, $500 \times 50$, $500 \times 150$, and $500 \times 200$. 
+It was found that the Hankel matrix $500 \times 150$ is sufficient, which corresponds to 
+32.5 convective time units.  
+The order of ERA-based ROM  is then determined by examining 
+the singular values (HSVs) of the Hankel $500 \times 150$ matrix.
+%
+As shown in figure \ref{fig:signal}, the output lift signal $C_l$ gradually 
+diverges as a function 
+of convective time $tU/D$ at $Re=60$. This asymptotic divergence behavior 
+indicates that the wake flow begins to lose its stability via a Hopf bifurcation, which 
+breaks the symmetry of flow field and gives rise to the periodic vortex street. 
+%
+The first $30$ singular values are shown in figure \ref{fig:HVS}. 
+The fast decaying singular values indicates that a 
+low order ROM can be constructed. 
+To further confirm the accuracy, the ERA-based ROM with the number of modes $n_r =25$  
+is compared with the FOM result in figure \ref{fig:signal}.
+A good match between the impulse response of the ROM and FOM 
+can be seen in the figure. 
+%
+%By using the impulse response for the Hankel matrices, the ERA-based ROM can be 
+%constructed from Eq. (\ref{eq:ERA_ROM_matrices}).
+%%
+%
+It is worth noting that the Hankel matrix is not necessarily to be 
+a square matrix for the suitability of ERA-based ROM \citep{Juang1985}. 
+As pointed by \cite{Juang1985}, further consideration is 
+required to determine optimal $r$ and $s$ in Eq. (\ref{eq:Hankel}). Therefore, the Hankel matrix can be 
+tall ($r > s$), wide ($r < s$)  or square ($r = s$). 
+In the present study, the dimension $r$ is fixed while $s$ is tuned 
+to obtain a resonably converged unstable eigenvalue for a good 
+match between the impulse response of FOM and ROM.
+
+Table \ref{tab:mesh_conv} summarizes the comparison of the growth rate and frequency, 
+which shows that the difference between $M2$ and $M3$ is less than $1\%$. 
+Therefore, the mesh $M2$ is adequate for the stability analysis of VIV.
+This study also confirms the convergence property of our ERA-based ROM procedure 
+for unstable wake flow. 
+%%%%%%%% figure for signal 
+\begin{figure}
+\centering 
+\begin{subfigure}{0.495\textwidth}
+\centering
+  \includegraphics[scale=0.4]{fig4a}
+    \caption{}
+    \label{fig:signal}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth}
+\centering
+  \includegraphics[scale=0.4]{fig4b}
+    \caption{}
+    \label{fig:HVS}
+    \end{subfigure} 
+  \caption{ERA-based ROM for the unstable wake behind a stationary circular 
+  cylinder at $Re=60$: (a) lift history of full order model and the ROM based on
+  linearized dynamics subject to the impulse response, and 
+  (b) Hankel singular values (HSVs) distribution corresponding to $500 \times 150$ Hankel matrix.}
+
+\end{figure}
+%%% Prediction of critical Re
+For further verification, we next show that the ERA-based ROM 
+is able to accurately predict the onset of the unstable wake state due to a
+Hopf bifurcation.
+The onset of unstable wake is commonly determined by the linearized 
+NS equations in the literature (\cite{Luchini2007,Marquet2008,Mettot2014}). 
+The growth rate $\sigma$ and 
+the frequency $f$ are plotted as a function of Reynolds number in figure \ref{fig:growth_f}. 
+The instability of the base flow occurs when the growth rate crosses $\sigma=0$
+line at the critical Reynolds number $Re_{cr} \approx 46.8$, which is in a good agreement 
+with the numerical prediction of \cite{Luchini2007,Marquet2008} and the experimental 
+measurement of \cite{Williamson1996}. 
+%
+The frequency predicted by the ERA-based ROM at this critical Reynolds number 
+is $f=0.119$, which matches quite well with the results 
+of \cite{Luchini2007,Marquet2008}. However, it is worth noting that 
+the frequency given by the linear model is only valid in the vicinity of critical Reynolds 
+number and fails to capture the frequency in the region far away from the critical point, 
+where nonlinear effects start to dominate the wake dynamics. 
+
+%%% Global physical modes
+To extract the most energetic structures via POD method, the snapshots of the flow 
+solutions are stored during the process of the ROM construction i.e., the flow solution
+is recorded at each physical time step subjected to the impulse response. 
+For the unstable wake case at $Re_{cr} \approx 46.8$, 
+the first POD mode corresponding to the 
+streamwise and cross-flow velocity is shown 
+in figure \ref{fig:cylinder_mode}. The spatial structures are antisymmetric and 
+they travel downstream with the formation of Kelvin-Helmholtz instabilities.
+
+%%%%%%%% figure for growth rate 
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+  \includegraphics[scale=0.3]{fig5a}
+    \caption{}
+    \label{fig:growth}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.3]{fig5b}
+	\caption{}
+	\label{fig:freq}
+	\end{subfigure}	
+        \caption{Prediction of critical Reynolds number via ERA-based ROM for the 
+                flow past a stationary circular cylinder: 
+                (a) growth rate $\sigma$ and
+                (b) frequency $f$.  The cylinder wake becomes unstable when 
+                the growth rate crosses $\sigma=0$ line at the critical 
+                $Re_{cr} \approx 46.8$ and the vortex shedding emanates.  }
+        \label{fig:growth_f}
+\end{figure}
+
+
+%%%%%%%% leading mode 
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+	 \includegraphics[scale=0.32]{fig6a}
+    \caption{}
+    \label{fig:mode1_ux}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.32]{fig6b}
+	\caption{}
+	\label{fig:mode1_uy}
+	\end{subfigure}	
+     \caption{First POD mode at 
+     $Re_{cr} \approx 46.8$: (a) streamwise velocity and 
+     (b) cross-stream velocity.
+      The flow is from left to right. }
+\label{fig:cylinder_mode}
+\end{figure}
+
+%%%%%%%% 
+
+\subsection{Unstable flow past a stationary cylinder}
+As discussed in Section \ref{sec:linear}, the wake flow becomes unstable 
+through a Hopf bifurcation when $Re > Re_{cr}$ 
+and  the vortex shedding appears behind a stationary cylinder 
+at the frequency $f_{vs}$. 
+The unstable flow finally reaches to a fully nonlinear state 
+with the alternate time-periodic vortex shedding. 
+%
+The flow field in the whole domain behaves like a global oscillator, which 
+causes unsteady lift and drag forces on the immersed body.
+%
+To further establish the validity of the numerical method 
+and the desired accuracy for the VIV simulation, 
+the dimensionless vortex shedding frequency $St= f_{vs}D/U$ and the root mean square (rms) value of  lift coefficient $C_l$ 
+are compared with the works of \cite{williamson1989} and \cite{Zhang1995} 
+for the Reynolds number $Re < 180$. 
+The results are summarized in Table \ref{tab:cl_st}, which demonstrates a good agreement 
+with the literature. This further confirms that 
+the numerical methodology and the mesh discretization are adequate to 
+capture the vortex dynamics and the stability characteristics of VIV response.  
+
+\begin{table}
+\begin{center}
+\begin{tabular}{ l c c c c l }
+
+Reynolds number $(Re)$   & $60$ & $80$ &  $100$ &  $120$   \\
+\multirow{2}{*}{Lift coefficient rms $(C_l)$}  
+& 0.1      & 0.17    &  0.24      & 0.29    & Present \\
+& 0.1      & 0.16    &  0.25      & 0.31    & \cite{Zhang1995}\\
+ \\
+\multirow{3}{*}{Strouhal number ($St$)} 
+& 0.137     & 0.156     &  0.166      & 0.176  & Present\\
+& 0.136     & 0.152     &  0.164      & 0.172  & \cite{williamson1989} \\
+& 0.142     & 0.159     &  0.172      & 0.182  & \cite{Zhang1995} 
+\end{tabular}
+\caption{Comparison of the rms value of lift coefficient ($C_l$) and Strouhal number $(St)$ obtained 
+with previous studies for a range of Reynolds numbers. 
+A constant time step size $\Delta t=0.05$ is employed for the present computations.}
+\label{tab:cl_st}
+\end{center}
+\end{table}
+
+
+%%%%%%%% ERA VIV%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results and discussion}\label{sec:VIV}
+
+
+\subsection{Assessment of ERA-based ROM}\label{sec:ROM_val}
+
+In this section,
+the constructed ERA-based ROM is first applied to analyze the stability properties of the 
+transversely vibrating circular cylinder at $(Re,m^*)=(60,10)$. 
+Consistent with the previous literature of \cite{meliga2011,Zhang2015}, 
+we use the terminology of structure mode (SM) and 
+the wake mode (WM) to classify the distinct eigenvalue trajectories of the linear 
+fluid-structure system governed by Eq. (\ref{eq:vivrom}).
+%
+When the eigenvalue of fluid-structure system approaches to that of the stationary 
+cylinder, the resulting mode is defined as WM. The fluid-structure 
+mode is considered as SM if the eigenvalue comes close to the natural frequency 
+of the cylinder-alone system. 
+%In the limit of weak coupling (e.g., large mass ratio), the wake mode and the structure mode are decoupled.
+
+%
+As discussed in \cite{Zhang2015}, VIV lock-in may result either from the instability 
+of WM alone or via simultaneous existence of unstable SM and WM. 
+In the event of first scenario, the lock-in occurs due to the closeness of 
+the frequencies of WM and SM.
+This type of VIV branch is termed as the resonance-induced lock-in.
+For the second scenario, the instability to sustain the VIV lock-in occurs via 
+combined mode instability of SM and WM, which is referred to as 
+the flutter-induced lock-in or the coupled-mode flutter (\cite{DeLangre2006}). 
+%
+In the present study, 
+the wake mode is also considered as the leading mode of unstable fluid system. 
+
+We consider the continuous-time eigenvalues in the context of 
+linear stability analysis via the ERA-based ROM. 
+Using the fluid-structure matrix Eq. (\ref{eq:vivrom}), the eigenvalue 
+is obtained by $\lambda=$log(eig($\mathsfbi{A_{fs}}))/\Delta t$,
+where $\Delta t=0.05$ is the time step.
+%
+To graphically depict the dynamical behavior, we study the eigenvalue distribution of the system 
+in the complex plane via root locus. The positions of the eigenvalues provide 
+the information about the stability of fluid-structure system. For example, roots in the right 
+half plane depict the unstable modes of the system, whereas the roots on the real 
+axis characterize the asymptotic (non-oscillatory) behavior. Roots that are closest 
+to the right half plane are lightly-damped oscillatory modes.
+
+ %%%%%%% figure for m10_eig
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+	 \includegraphics[scale=0.35]{fig7a}
+    \caption{}
+    \label{fig:m10_re60_eig1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.35]{fig7b}
+	\caption{}
+	\label{fig:m10_re60_eig23}
+	\end{subfigure}	
+     \caption{Eigenspectrum of the ERA-based ROM for a circular cylinder at $(Re,m^*)=(60,10)$: 
+     (a) root loci as a function of the reduced natural frequency $F_s$, 
+     where the unstable right-half (Re$(\lambda) > 0$) plane is shaded in grey color,
+     and the hollow arrow indicates increasing $F_s$, 
+     (b) real and imaginary parts of the root loci, whereby the lock-in region 
+     is shaded in grey color. Two branches of lock-in namely resonance and flutter can 
+     be seen in (b).
+     }
+\label{fig:m10_eig}
+\end{figure}
+
+%Fs sweeping 
+Figure \ref{fig:m10_re60_eig1} shows the eigenvalue trajectory of 
+the fluid-structure system as a function of the reduced natural frequency 
+$F_{s}$ with $0.05 \le F_{s} \le 0.25$ and
+the increment is $\Delta F_{s}=0.025$.
+%
+%WM branch 
+In the figure, the WM branch originates in the vicinity of eigenvalue of stationary cylinder (uncoupled WM) 
+and loops back as the reduced natural frequency $F_s$ increases. It is expected 
+that the WM finally recovers to the eigenvalue of stationary cylinder as $F_s$ 
+approaches infinity or the cylinder becomes stationary (i.e.,
+without elastically mounted). It is also evident that WM  
+remains unstable ($\sigma > 0$) throughout the sweeping as $Re = 60 > Re_{cr}$. 
+%SM branch 
+On the other hand, the SM branch arises from the bottom of the complex plane (low frequency regime) to the upper complex plane (high frequency regime).
+As elucidated in figure \ref{fig:m10_re60_eig23}, 
+the SM becomes unstable only when $0.147 < F_{s} \le 0.179$, which is determined by
+the real part of eigenvalue.
+% flutter mode 
+As mentioned earlier, the unstable SM phenomenon can be considered  
+as the coupled-mode flutter or the \emph{combined mode instability}. 
+As shown in figure \ref{fig:m10_re60_eig23}, the imaginary part of eigenvalue as a 
+function of $F_s$ reveals that the two distinct frequencies (WM and SM frequencies) 
+co-exist in the combined mode instability. 
+% resonance mode 
+In addition, figure \ref{fig:m10_re60_eig23} also indicates the frequencies 
+of WM and SM come closer when $0.11 \le F_{s} \le 0.147$, which is recognized 
+as the resonance mode. 
+Note that the lower left boundary of the resonance mode 
+cannot be pinpointed precisely from the ROM due to the overlapping of SM and WM trajectories. 
+Thus we determine the frequency at the lower left boundary from the FOM simulation, 
+which is found to be $F_s=0.11$.
+
+To further verify the stability results predicted by the ERA-based ROM, 
+the VIV response is computed by direct numerical simulation using FOM. 
+%
+As shown in figure \ref{fig:m10_re60_fs}, the vortex shedding frequency 
+begins to synchronize with the structure natural frequency at $F_{s}=0.11$ and recovers to 
+the vortex shedding frequency at $F_{s}=0.179$.
+%
+As the nonlinearity starts to dominate the VIV response, 
+the two distinct frequencies of WM and SM corresponding to the flutter mode
+are eventually synchronized with the structure natural frequency $F_s$. 
+%%
+Figure \ref{fig:m10_re60_cly} suggests that the cylinder rises to the 
+peak VIV amplitude at $F_{s}=0.179$ (lock-in onset $U_r \approx 5.59$), 
+which compares accurately with the upper boundary of flutter mode predicted by the 
+present ERA-based ROM.
+
+It is worth mentioning that the cylinder acquires the maximum amplitude
+at $F_{s}=0.179$ or $F_s/St=1.31$, which is not at $F_s/St \approx 1$, as expected from 
+the classical resonance interpretation of VIV lock-in. This phenomenon suggests that the 
+onset of VIV lock-in results from the amplification of energy input as a consequence of unstable SM, 
+in which the structure is able to optimally absorb energy from the surrounding fluid system. 
+It is analogous to the pitch and plunge flutter observed in 
+the aeroelastic airfoil configuration. 
+The flutter mode of VIV lock-in results 
+from the coupling of periodic vortex shedding and the structural transverse displacement. 
+%We argue that the lock-in in the flutter region is caused by the competition of SM and WM. 
+In the flutter regime ($1.07 < F_s/St \le 1.31$), 
+the unstable SM and WM jointly sustain VIV lock-in, 
+whereas the wake mode dominates the 
+resonance regime ($0.8 \le F_s/St \le 1.07$) until the VIV goes into the lock-out region. 
+
+%%%%%%% figure for m10_FOM
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+	 \includegraphics[scale=0.35]{fig8a}
+    \caption{}
+    \label{fig:m10_re60_fs}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.35]{fig8b}
+	\caption{}
+	\label{fig:m10_re60_cly}
+	\end{subfigure}	\\
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+%     \includegraphics[scale=0.3]{m10_fem_cl}
+%	\caption{}
+%	\label{fig:m10_fem_cl}
+%	\end{subfigure}	
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+%     \includegraphics[scale=0.3]{m10_fem_phi}
+%	\caption{}
+%	\label{fig:m10_fem_phi}
+%	\end{subfigure}	
+     \caption{VIV results as a function of reduced natural frequency $F_s$
+     using FOM at $(Re,m^*)=(60,10)$: variation of 
+      (a) normalized vortex shedding frequency $f$ and 
+      (b) rms value of lift coefficient ($C_l$) and normalized maximum amplitude ($Y_{max}$).
+      The lock-in is shaded in grey color.}
+     \label{fig:m10_re60_fom}
+\end{figure}
+
+More quantitative insights into the VIV lock-in mechanism can be obtained by 
+figure \ref{fig:m10_re60_Phi}, which shows the phase angle $\phi$ estimated 
+by the ERA-based ROM (see Appendix A). The phase angle $\phi$ of the ROM is function of ($F_s,\lambda$) and its
+sign is determined by the real part of eigenvalues. 
+The instantaneous phase angle of FOM is obtained 
+by the Hilbert transformation of lift and displacement, as described in \cite{Tham2015}. 
+%
+In figure \ref{fig:m10_re60_Phi}, we present the phase angles of the FOM and 
+ROM as functions of $F_s$ at $(Re,m^*)=(60,10)$.
+%
+As compared to the FOM result, 
+the WM trajectory yields a continuous transition from $0^0$ to $180^0$ as $F_s$ decreases in the lock-in region.
+%where the frequencies of WM and SM synchronize. 
+In contrast, the phase angle of SM remains positive only within 
+the flutter mode ($0.147 < F_{s} \le 0.179$). 
+%
+%As presented in figure \ref{fig:m10_re60_eig1}, 
+%the structure mode remains stable and the resonance-induced instability is mainly
+%sustained by the wake mode.
+
+\begin{figure}
+\centering
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+	 \includegraphics[scale=0.35]{fig9a}
+    \caption{}
+    \label{fig:m10_re60_Phi}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.35]{fig9b}
+	\caption{}
+	\label{fig:m10_response}
+	\end{subfigure}	
+	\caption{VIV results as a function of reduced natural frequency $F_s$ 
+        at $(Re,m^*)=(60,10)$: (a) comparison of 
+        phase angle difference $\phi$ between the ERA-based ROM and FOM, where 
+        the lock-in is shaded in grey color and 
+	 (b) lift $C_l$ history at two representative 
+         frequencies $F_s=(0.14,0.177)$.
+         In (a), ({\protect\bluedashdot}) represents $F_s=0.13$. }
+\end{figure}
+
+It is also interesting to note in figure \ref{fig:m10_re60_cly} that the lift coefficient 
+is significantly amplified in the vicinity of VIV lock-in onset reduced velocity ($U_r \approx 5.59$).
+A gradual decrease and eventually recovery to the value of stationary cylinder counterpart 
+as $U_r$ increases ($F_s$ decreases) can be seen in the figure. 
+%the resonance region. 
+To further assess the behavior of lift coefficient in the 
+flutter and resonance regimes, the lift histories for two 
+representative reduced frequencies $F_{s}=0.177$ and 0.140
+are compared in figure \ref{fig:m10_response}. 
+% lift reduction associate with phase jump 
+The minimum rms value of lift coefficient $C_l$ occurs 
+at $F_s \approx 0.13$ or $F_s / St \approx 0.95$, which coincides with the phase angle jump, as shown in figure \ref{fig:m10_re60_Phi}. 
+Therefore, we can infer that 
+the reduction in the rms lift coefficient has a direct relation 
+with the phase angle. In Section \ref{sec:ReEffect}, 
+we further confirm that the lift reduction is not associated with the resonance mode.
+
+%% mass ratio effect 
+Geometric and physical parameters such as cross-sectional shape and 
+mass ratio play an important role with regard to the coupling strength 
+of fluid-structure interaction. 
+A classification of the fluid-structure eigenmodes as 
+WM and SM is suitable for weak fluid-structure interaction 
+(e.g., very large mass ratio), which is elucidated in figure \ref{fig:m10_eig} by two distinct 
+eigenvalue branches of WM and SM. Owing to weaker fluid-structure coupling 
+at large $m^*$ (i.e., in the limit of $m^* \to \infty$),  the eigenfrequency 
+of WM approaches to that of the stationary cylinder wake for all values of $F_s$ and 
+the frequency of SM comes close to the natural frequency of the cylinder-only system.
+%
+However, the root loci of WM and SM can coalesce   
+and form coupled modes at certain conditions, such as in the limit of 
+low mass ratio \citep{meliga2011,mittal2016} and for different geometrical shapes, 
+as demonstrated in Section \ref{sec:topology}.
+These coupled modes do not offer a distinct characteristics of the WM and SM, 
+since both branches exchange their roles when the coalescence of eigenvalue occurs.
+Similar to \cite{mittal2016}, we term these mixed or coupled modes 
+as the wake-structure mode I (WSMI) and the wake-structure mode II (WSMII).
+%
+For higher value of $F_s$,  WSMI behaves as WM and WSMII recovers to SM.
+On the other hand, for smaller $F_s$ range, WSMI and WSMII  represent the SM and
+WM, respectively.
+%
+A characteristic anticrossing with a frequency splitting can be also observed at 
+low mass ratio, which is one of the trait of strongly coupled harmonic oscillators 
+\citep{novotny2010}.
+%
+To demonstrate the effect of the mass ratio,
+further details of the coupled modes WSMI and WSMII are discussed in Appendix B.
+
+In this section, the ERA-based ROM is successfully employed to perform 
+the linear stability analysis of the vortex-induced vibration of transversely vibrating 
+circular cylinder. Consistent with the previous study of \cite{Zhang2015} 
+on the mechanism of VIV, we clearly observe two distinct lock-in patterns 
+of the flutter and the resonance from our eigenmode analysis.
+However, the regime classification in \cite{Zhang2015} was only based on 
+the VIV linear analysis at $Re=60$. 
+%
+In the next section, we extend the existence and dependence of the two distinct lock-in modes 
+for a larger parameter space of Reynolds number in the laminar flow regime.
+%ccccccccccccccccccccccc
+
+\subsection{Effect of Reynolds number}\label{sec:ReEffect}
+As shown in figure \ref{fig:growth}, the growth rate amplifies as $Re$ increases, 
+which indicates that the coupling between the WM and SM tends to become stronger for higher $Re$. 
+To further investigate the effect of Reynolds number, 
+the VIV ROMs for $Re=(70,100)$ and $m^*=10$ are constructed and the 
+stability analysis similar to $Re=60$ is carried out. 
+The root loci as a function of natural frequency $F_s$ are shown in 
+figure \ref{fig:dre_eig23}. As compared to the root loci at $Re=60$, figure \ref{fig:dre_eig23} 
+shows that the range of unstable SM or flutter mode slightly increases 
+to $0.106 \le F_s \le 0.187$ or $0.71 \le F_s/St \le 1.25$ 
+and covers the entire lock-in region. 
+%
+It is also evident by the FOM results, as shown in figure \ref{fig:re70_fem}, 
+where the lock-in region 
+is  $0.11 \le F_s \le 0.192$ or $0.73 \le F_s/St \le 0.128$. 
+This new finding from the present work 
+suggests that the extents of flutter and resonance modes are highly sensitive 
+to Reynolds number. 
+%
+This can be further elucidated by looking into the stability region 
+where the magnitude of velocity leading eigenmode
+is large \citep{Luchini2007}. 
+The complex modal velocity components, 
+the streamwise velocity $\widehat{u}$ 
+and the transverse velocity $\widehat{v}$, 
+are computed from the linearized NS equations around the base flow. 
+To visualize the magnitude of the leading modal velocity, 
+we first compute the amplitude of the complex modal velocity components ($|\widehat{u}|$ and $|\widehat{v}|$)
+and then evaluate the pointwise modal velocity magnitude 
+as $|\widehat{U}|=\sqrt{|\widehat{u}|^2+|\widehat{v}|^2}$.
+As shown in figure \ref{fig:dre_mode}, the stability
+region shifts gradually to the bluff body, which indicates the coupling 
+effect between the unstable wake and the bluff body is enhanced 
+as $Re$ increases.
+
+%%%%%%% figure for eig ROM RE=70
+ 
+ \begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig10a}
+    \caption{}
+    \label{fig:dre_eig1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig10b}
+	\caption{}
+	\label{fig:dre_eig23}
+	\end{subfigure}	
+\caption{Effect of Reynolds number on the eigenspectrum of ERA-based ROM at $Re=(60,70,100)$ and $m^*=10$:  
+        (a)root loci as a function of the reduced natural frequency $F_s$,
+        where the unstable right-half (Re$(\lambda) > 0$) plane is shaded in grey color,
+        and hollow arrow indicates increasing $F_s$, 
+       (b) real and imaginary parts of the root loci.
+       SM data points are denoted by the filled symbol with the same shape as WM in (a,b).
+       The boundary of $Re(\lambda)>0$ for SM at $Re=70$ is defined at $F_s=0.106$ 
+        ({\protect\greendash}), and $F_s=0.187$ ({\protect\greendashdot}), 
+       in the real parts of root loci in (b), respectively. 
+       }
+
+	\label{fig:dre_eig}
+\end{figure}
+ 
+ 
+ %%%%%%% figure for VIV FEM
+ 
+ \begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig11a}
+    \caption{}
+    \label{fig:m10_re70_fs}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig11b}
+	\caption{}
+	\label{fig:m10_re70_cly}
+	\end{subfigure}	
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+% \includegraphics[scale=0.3]{m10_re70_cl}
+%	\caption{}
+%	\label{fig:m10_re70_cl}
+%	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig11c}
+	\caption{}
+	\label{fig:m10_re70_phi}
+	\end{subfigure}	
+        \caption{VIV results  as a function of reduced natural frequency $F_s$
+ by FOM at $(Re,m^*)=(70,10)$: variation of (a) normalized vortex shedding frequency $f$, 
+      (b) rms value of lift coefficient ($C_l$) and maximum amplitude ($Y_{max}$), and
+      (c) phase angle ($\phi$).
+      The lock-in is shaded in grey color.}
+	\label{fig:re70_fem}
+\end{figure}
+
+%The root loci as a function of $F_s$ with Reynolds number $Re = 60,70,100$ are plotted 
+%in figure \ref{fig:difms_eig1}, which 
+
+Figure \ref{fig:dre_eig} shows that the unstable SM branch is gradually pronounced and 
+covers the lock-in region as the Reynolds number increases, whereas the size of WM loop becomes smaller. The threshold Reynolds number is approximately $Re = 70$ 
+when the resonance-mode ceases to exist for $m^*=10$. 
+This result suggests that the frequency lock-in VIV is pure flutter mode 
+instability for $Re \ge 70$, which is consistent with the theoretical analysis 
+of \cite{DeLangre2006} using the wake oscillator model. However, 
+due to the simplification in the wake oscillator model and 
+without nonlinear and dissipative terms, a general statement on VIV lock-in
+as a  coupled flutter mode may not be valid for all flow conditions. 
+On the other hand, the numerical study of \cite{Zhang2015} 
+is only valid for $Re_{cr} < Re < 70$. 
+Table \ref{tab:Re_VIVpattern} summarizes the existence of flutter 
+and resonance modes at different Reynolds numbers for a vibrating circular cylinder. 
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.3]{fig12a}
+    \caption{}
+    \label{fig:re60_mode1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig12b}
+	\caption{}
+	\label{fig:re70_mode1}
+	\end{subfigure}	
+        \caption{Influence of Reynolds number on the stability regions defined 
+        by the pointwise modal velocity magnitude $|\widehat{U}|$
+        of leading eigenmodes for $Re=$: (a) 60, (b) 70.
+        The flow is from left to right.
+        }
+	\label{fig:dre_mode}
+\end{figure}
+
+
+ %%%%%%%%
+ 
+ \begin{table}
+  \begin{center}
+  \begin{tabular}{l c c}
+       VIV regimes   & flutter & resonance \\
+       $Re \le Re_{cr}$      & $\checkmark$ & \\
+       $Re_{cr} < Re < 70$   & $\checkmark$ & $\checkmark$ \\
+       $Re \ge 70$           & $\checkmark$ &  
+  \end{tabular}
+  \caption{VIV lock-in regimes of circular cylinder for Reynolds number 
+  in the range $ 30 \le Re \le 100$ 
+  and mass ratio $m^*=10$. For $Re > Re_{cr}$, flutter regime comprises 
+    both unstable eigenvalues (Re$(\lambda) > 0$) 
+     of WM and SM, whereas resonance regime has only unstable WM.}
+  \label{tab:Re_VIVpattern}
+  \end{center}
+\end{table}
+
+ %%%%%%% figure for VIV vorticity contour at different Fs
+ 
+\begin{figure}
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.3]{fig13a}
+    \caption{}
+    \label{fig:m10_re70_vorfs013}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig13b}
+	\caption{}
+	\label{fig:m10_re70_vorfs015}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig13c}
+	\caption{}
+	\label{fig:m10_re70_vorfs017}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig13d}
+	\caption{}
+	\label{fig:m10_re70_vorfs019}
+	\end{subfigure}	
+        \caption{Full order results for the circular cylinder at  $(Re, m^*)=(70, 10)$:
+          Instantaneous vorticity contours at $F_{s} = $ (a) 0.13, (b) 0.15, (c) 0.17, (d) 0.19. 
+        Contour levels are from -0.5 to 0.5 in increment of 0.077 and the flow is from left to right.}
+	\label{fig:vor_fs_re70}
+\end{figure}
+ 
+
+It is also interesting to note in figure \ref{fig:m10_re70_cly}
+that the reduction in the rms value of lift coefficient 
+also appears, although the resonance regime does not exist at $Re = 70$. 
+%
+This observation suggests that the reduction of rms lift force does 
+not interlink with the flutter or resonance regime, which is different from the 
+conclusion by \cite{Zhang2015} that the rms lift coefficient is 
+attenuated in the resonance regime 
+but amplified in the flutter region. As shown in figures \ref{fig:m10_re70_cly} and \ref{fig:m10_re70_phi}, the
+minimum lift coefficient appears at $F_s \approx 0.135$ or $F_s / St \approx 0.92$, where the phase angle changes from
+$0^0$ to $180^0$. It further confirms that the lift reduction phenomenon is explicitly linked with the phase angle.
+
+%
+Furthermore, figure \ref{fig:vor_fs_re70} shows the instantaneous patterns of vortex shedding are investigated for a broad range of reduced natural frequencies.
+We adopt the classical 
+terminology of \cite{williamson1988vortex}  to identify the vortex shedding patterns.
+% definition of 2S and C(2S) 
+In the 2S mode, a single
+vortex is alternately shed from each side of the cylinder per shedding cycle, 
+whereas the vortices start to coalesce in the far wake in the C(2S) mode.
+%
+As reported by \cite{Zhang2015}, the 2S mode is observed in the resonance regime, 
+whereas C(2S) mode appears in the flutter region. However, we argue that the vorticity topology 
+changes gradually from the C(2S) to the 2S mode as $F_s$ decreasing from 0.19 to 0.13, which indicates the topology variation associates 
+with the vibration amplitude. The C(2S) mode starts to appear at VIV lock-in onset $U_r\approx 5.21$ ($F_{s}=0.192$) 
+and gradually transits to the 2S mode as the amplitude decreases. 
+%
+To further generalize our ERA-based ROM 
+for the VIV lock-in regime, we next investigate the influence of rounding in the 
+VIV lock-in mechanism of a square cylinder.
+
+
+%ccccccccccccccccccccccc
+
+%% rounding effects 
+
+\subsection{Effect of rounding}\label{sec:square}
+In the previous section, the effects of Reynolds number and mass ratio have 
+been considered for the transverse VIV of circular cylinder. 
+It is interesting to explore whether the aforementioned VIV lock-in regimes
+of circular cylinder is still applied to an elastically mounted square cylinder. 
+As it is known that the presence of sharp corners on a square cylinder vastly 
+alters the flow dynamics as compared to the ones with circular/elliptical section 
+having smooth curves. Besides the angle of incidence, the sharp corners are 
+important contributing factor in the geometry of bluff body, as they 
+affect the flow separation points which in turn dictates the wake dynamics.
+By gradual removal of sharp corners of square cylinder, 
+a circular cross-section can be recovered.
+%
+%
+%
+As reported in \cite{Jaiman2015}, the VIV response of square cylinder is dramatically different
+in comparison to its circular cylinder counterpart.
+For example, the lock-in region of square cylinder is narrower and the amplitude 
+is smaller for the similar VIV operational parameters ($Re, m^*, \zeta$), 
+as extensively discussed in \cite{Jaiman2016a,Jaiman2016b}. 
+%
+Recently, a rounded square is also numerically studied in 
+terms of primary and secondary instabilities
+\citep{Park2016}, which shows that the sharp corner alters 
+the flow topology significantly,
+subsequently changing the stability properties of wake dynamics. 
+%
+It is therefore important to consider the effect of rounding the corners of a square 
+cylinder for the VIV mechanism. 
+The VIV stability properties of five different 
+cross-sections including circle and square are explored in the context of eigenvalue 
+distributions.
+\begin{figure}
+\centering
+    \includegraphics[scale=0.55]{fig14}
+    \label{fig:square_schematic}
+     \caption{Square-section bluff body with projected width $D$ and
+     rounding radius $r_{s}$ in uniform flow. 
+      Rounding is introduced by inscribing a quarter circle with $r_{s}$ at each edge of 
+      the square geometry.
+      The square and circular cylinders correspond 
+to the rounding radius of $r_{s}=0$ and $r_{s}=0.5D$, respectively. 
+     }
+	\label{fig:square}
+\end{figure}
+
+Figure \ref{fig:square} schematically depicts the 
+square cylinder with a rounding radius $r_s$. The edge length of square 
+with sharp corner is denoted by $D$. 
+{Rounding is introduced by inscribing a quarter circle with $r_{s}$ at each edge of 
+the square geometry, whereby $r_{s}=0.5D$  corresponds to a circular shape 
+and $r_{s}=0$ recovers to the basic square shape.}
+%
+The characteristic dimension $D$ of all the cross-sections is identical,  
+where $D$ is the maximum dimension of the cylinder normal to the flow.
+%
+The origin of the Cartesian coordinate system 
+coincides with the center of the square. 
+%%%%%%% figure for ROM different topology
+ 
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig15a}
+    \caption{}
+    \label{fig:re60_square_eig1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig15b}
+	\caption{}
+	\label{fig:re60_square_eig23}
+	\end{subfigure}	
+        \caption{Effect of rounding $r_s$ on eigenspectrum of ERA-based ROM at $(Re,m^*)=(60,10)$: 
+        (a) root loci as a function of the reduced natural frequency $F_s$, 
+        whereby the unstable right-half (Re$(\lambda) > 0$) plane is shaded in grey and the 
+        hollow arrow indicates increasing $F_s$ and 
+        (b) real and imaginary parts of root loci. 
+        In (a), the unstable eigenvalues of stationary square cylinder (uncoupled WM) 
+        with different rounding values are connected by black curve with solid arrow indicating increasing $r_s$.
+        SM is denoted by the filled symbol with the same shape as WM in (a,b).
+        }
+	\label{fig:square_eig}
+\end{figure}
+
+%%%%%%%% figure for square fem 
+
+ \begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig16a}
+    \caption{}
+    \label{fig:m10_re60_square_fs}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig16b}
+	\caption{}
+	\label{fig:m10_re60_square_cly}
+	\end{subfigure}	
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+% \includegraphics[scale=0.3]{square_fem_cl}
+%	\caption{}
+%	\label{fig:square_fem_cl}
+%	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig16c}
+	\caption{}
+	\label{fig:m10_re60_square_phi}
+	\end{subfigure}	
+        \caption{VIV results of square cylinder with sharp corners 
+        using FOM at $(Re,m^*)=(60,10)$: 
+       variation of (a) normalized vortex shedding frequency $f$ and  
+      (b) rms value of lift coefficient ($C_l$) and maximum amplitude ($Y_{max}$), and 
+      (c) phase angle ($\phi$).
+      The lock-in is shaded in grey color.}
+	\label{fig:square_fem}
+\end{figure}
+
+To begin with, the VIV linear analysis is conducted 
+for a square cylinder with sharp corners at ($Re, m^*$) = (60, 10). 
+It is evident from figure \ref{fig:re60_square_eig1} that the SM is stable, 
+which suggests the lock-in is entirely dominated by the resonance mode. Due to the absence of lock-in 
+via flutter mode, the onset reduced velocity ($U_r$) for a square cylinder may not be clearly recognized as compared to the circular cylinder counterpart. 
+Furthermore, the region of WM loop for the square cylinder is smaller than the circular cylinder counterpart,
+implying the coupling between the fluid and structure is reduced due to the sharp corners.
+%
+In figure \ref{fig:square_eig}, the root loci for the fluid-structure system of square cylinder 
+provide an explanation that the lock-in only consists of resonance mode 
+and the flutter state disappears 
+due to the presence of sharp corners for $(Re,m^*)=(60,10)$. 
+As expected, the sharp corners suppress the continuous movement 
+of separation points, whereby the smooth circular cylinder promotes the movement of separation points.
+%The lock-in region in this case can be predicted by the FOM simulation. 
+Figure \ref{fig:square_fem} shows the frequency,  the VIV response and 
+the lift coefficient from the FOM simulation for the vibrating square cylinder. 
+The extent of lock-in 
+region can be observed as $0.11 \le F_{s} \le 0.154$ or $0.87 \le F_{s}/St \le 1.21$.  
+The results illustrate that the maximum amplitude 
+also acquires at the lock-in onset ($U_r \approx 6.49$) approximately even no flutter regime 
+exists. 
+%This finding suggests that the lock-in is indeed due to the mode competition effects 
+%between SM and WM.
+%
+It is notable that the maximum 
+amplitude is smaller and the lock-in region is narrower than its circular cylinder counterpart, 
+which is observed earlier for the square cylinder \citep{Jaiman2016a,Zhao2013b}. 
+%%
+
+Similar to its circular counterpart, the lift coefficient for a square cylinder 
+also experiences an amplification 
+in the vicinity of lock-in onset $U_r \approx 6.49$ 
+, and gradually recovers to the stationary counterpart as $F_s$ decreases ($U_r$ increases). 
+The maximum value of rms lift coefficient is $C_l=0.314$, as shown in figure \ref{fig:m10_re60_square_cly},  
+which is approximately 3.1 times larger 
+than the stationary square cylinder value ($C_l=0.1$).
+For the VIV of circular cylinder, on the other hand, 
+the amplification of the rms lift coefficient is approximately $5.9$ times than the stationary 
+circular cylinder, as shown in figure \ref{fig:m10_re60_cly}.
+%
+To understand the direction of energy transfer between the fluid and the square cylinder, 
+the phase angle is shown in figure \ref{fig:m10_re60_square_phi}. 
+Similar to the circular cylinder, there is a sudden jump from $0^0$ to $180^0$ during the lock-in region around $F_s \approx 0.125$ or $F_s/St \approx 0.98$, where the rms lift coefficient 
+acquires the minimum value. 
+%
+%The root loci of square VIV ROM in figure \ref{fig:square_eig} provide an explanation that 
+%the lock-in only consists of resonance mode and the flutter state disappears 
+%due to the presence of sharp corners for $(Re,m^*)=(60,10)$. 
+%As expected, the sharp corners suppress the continuous movement 
+%of separation points, whereby the smooth circular cylinder promotes the movement of separation points.
+
+
+%%%%%%% figure for  different vorticity contour
+ 
+  \begin{figure}
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.3]{fig17a}
+    \caption{}
+    \label{fig:m10_re60_square_vorfs120}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig17b}
+	\caption{}
+	\label{fig:m10_re60_square_vorfs130}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig17c}
+	\caption{}
+	\label{fig:m10_re60_square_vorfs140}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig17d}
+	\caption{}
+	\label{fig:m10_re60_square_vorfs150}
+	\end{subfigure}	
+        \caption{Full order results for the square cylinder at  $(Re, m^*)=(60, 10)$:
+         Instantaneous vorticity contours at $F_{s}=$ (a) 0.12, 
+        (b) 0.13, (c) 0.14, (d) 0.15. Contour levels are from -0.5 to 0.5 in increment of 0.077 
+        and the flow is from left to right.}
+	\label{fig:vor_fs_square}
+\end{figure}
+
+
+%
+For the range of $F_s$ considered, two counter-rotating vortices (2S wake mode) are released 
+every oscillation cycle from the rear of each cylinder, as shown in figure \ref{fig:vor_fs_square}. 
+From the vorticity fields, separations along the front corner of lateral edges  
+for the square with sharp corners can be observed for the considered cases.
+% Weigang: Check this. should be C(2S) for circular cylinder
+While the C(2S) mode is observed in the vicinity of lock-in onset for the circular cylinder, the 
+classic 2S wake mode is dominated for the square cylinder. 
+This is consistent with our previous hypothesis that 
+the wake pattern is closely related to the vibration amplitude.
+%
+We next elucidate the influence of rounding 
+on the distribution of eigenspectrum and the unstable global 
+modes.
+
+
+%%%%%%% figure for  leading mode
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+	 \includegraphics[scale=0.3]{fig18a}
+    \caption{}
+    \label{fig:square_r00}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig18b}
+	\caption{}
+	\label{fig:square_r01}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig18c}
+	\caption{}
+	\label{fig:square_r02}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig18d}
+	\caption{}
+	\label{fig:square_r04}
+	\end{subfigure}	
+     \caption{Stability regions shown by the spatial distribution of pointwise 
+     modal velocity amplitude $|\widehat{U}|$ at $Re=60$ 
+     for different rounding parameters $r_s=$
+     (a) 0.0, (b) $0.1D$, (c) $0.2D$, and (d) $0.4D$. 
+     The flow is from left to right.}
+\label{fig:square_mode}
+\end{figure}
+ 
+%The root loci is plotted in figure \ref{fig:square_eig_drs} for the square cylinder 
+%with different values of rounding radius $r_{s}$. 
+As shown in figure \ref{fig:re60_square_eig1}, 
+the SM trajectory moves gradually towards the positive real axis (Re$(\lambda)> 0$) 
+as the rounding radius  $r_s$ increases. 
+Meanwhile, the flutter region starts to appear and achieves the maximum 
+extent for the rounding radius $r_{s}=0.5D$. 
+%
+As expected, the rounding of the 
+corners delays the onset of separation hence, the rounding aids in reducing the bluffness of square cylinder. 
+%
+It is also worth noting that unstable SM and WM loop are both more 
+pronounced indicating that the coupling effect between the fluid and structure becomes stronger.
+%
+However, the growth rate of uncoupled WM does not increase monotonically 
+from the square ($r_s=0$) to the circular ($r_s=0.5D$) configuration, 
+as shown by a black curve with solid arrow in figure \ref{fig:re60_square_eig1}.  
+%
+The growth rate first decreases, 
+then increases and eventually recovers to the growth rate of the circular cylinder.
+
+By examining the real part of root loci in figure \ref{fig:re60_square_eig23}, 
+the onset of lock-in starts to move
+towards the low reduced velocity (high $F_s$) as the rounding radius $r_s$ increases. 
+%
+In figure \ref{fig:square_mode}, from the comparison of stability regions through the contours 
+of $|\widehat{U}|$, we observe that the rounding has significant 
+effects on the wake topology, 
+subsequently alerting the stability properties. 
+The separation point can move widely as the rounding radius increases, indicating the flutter 
+mode is more pronounced. 
+%
+It also shows that the stability region gradually moves close to the rear of the bluff body as 
+$r_s$ increases, which is similar to the effect of $Re$, as discussed in 
+Section \ref{sec:ReEffect}. Consequently, the level of 
+fluid and structure interaction is enhanced.
+%
+This trend is monotonic as compared to the growth rate, suggesting
+that the flutter mode is pronounced gradually. It explains why the SM trajectory moves towards 
+the right half plane monotonically.
+%
+The WM branch, on the other hand, moves toward imaginary axis positive or 
+higher frequency direction, monotonically.
+%
+For the similar VIV operating parameters, 
+the circular cylinder is much easier to perturb as compared to its square counterpart 
+at the same Reynolds number. 
+
+% square less stable for fixed but stable with transverse degree of freedom 
+While the rounding generally stabilizes 
+the wake flow for a stationary square cylinder,  
+it promotes the movement of separation points along the smooth rounded surface 
+of the vibrating cylinder.
+Analogous to the aeroelastic flutter with 
+plunge-torsion mode coupling for an airfoil configuration, as pointed by \cite{DeLangre2006}, 
+the transverse periodic displacement and the movement of separation points can form a 
+similar dynamics for a transversely vibrating circular cylinder.
+The square cylinder with sharp corners restricts the free motion of separation points 
+and is relatively stable in the sense that the lock-in onset reduced velocity $U_r$ 
+is greater than its circular counterpart. 
+Moreover, as compared to the circular cylinder at $(Re,m^*)=(60,10)$, 
+the lock-in range of square cylinder is narrower and only resonance regime exists. 
+%
+To further generalize our findings, 
+we next examine the lock-in regimes from the eigenvalue distributions for additional bluff bodies 
+of a smooth curve geometry of elliptic cylinder and two sharp corner shapes of 
+forward triangle and diamond cylinders.
+%
+%% topology effects
+
+%ccccccccccccccccccccccc
+\subsection{Effect of geometry}\label{sec:topology}
+
+In this section, a set of three representative two-dimensional geometries is assessed to elucidate 
+the frequency lock-in regimes and to demonstrate the ability of the developed ERA-based ROM. 
+The three additional geometries namely ellipse as a smooth curve 
+and forward triangle and diamond 
+with sharp corners are shown in figure \ref{fig:topology}. 
+The major axis with length $D$ of elliptic cylinder is placed normal to the flow direction and 
+the aspect ratio $AR=0.5$ is defined by the ratio of minor $D/2$ to major axis length. 
+The forward triangle is equilateral and 
+has the edge with length $D$ normal to the flow and the peak corner is in the leeward side.
+Similar to \cite{Zhao2013b}, 
+the diamond geometry is considered as a square cylinder with $45^0$ flow incidence and 
+the Reynolds number is defined by the edge length $D$ as the characteristic length scale.
+%
+Similar to the circular and square cylinders, the new geometries of ellipse, 
+the forward triangle and the diamond cylinders 
+undergo the unsteady wake transition via a Hopf bifurcation at a critical 
+Reynolds number $Re_{cr}$, which is responsible for the onset of the time-periodic 
+vortex-shedding phenomenon. 
+%
+Table \ref{tab:Recr_topology} shows 
+the critical Reynolds number  $Re_{cr}$ 
+of different geometries computed by our ERA-based ROM, 
+which matches reasonably well with previous studies.
+%
+It is worth noting that the forward triangle has the lowest critical Reynolds number 
+for the initial wake transition from steady to unsteady flow. 
+%
+The unsteady transition of the ellipse with the aspect ratio $AR=0.5$ and the diamond 
+with sharp corners occurs lower than their circular and square counterparts.
+%
+Due to unsteady lift and drag forces, the three geometries can undergo 
+flow-induced vibration if mounted on the elastic supports. 
+%% topology 
+\begin{figure}
+\centering
+    \includegraphics[scale=0.7]{fig19}
+     \caption{Schematics of bluff-body geometries with relevant dimensions. 
+     Representative elliptical cylinder (left) has aspect ratio $AR=0.5$, forward 
+     triangle (middle) is equilateral with angle $60^0$, 
+     and diamond (right) represents a square 
+     cylinder with sharp corners at $45^0$ flow incidence.}
+      \label{fig:topology}
+\end{figure}
+
+%% critical Reynolds number
+
+\begin{table}
+  \begin{center}
+  \begin{tabular}{l c c c c c}
+                        &ellipse &circular &square &forward triangle  &diamond\\
+       Present $Re_{cr}$               & 38.0 & 46.8 & 44.7 & 35.5 & 38.9 \\
+       \cite{Thompson2014}   & 38.8 & 47.2 & --   & --   & --   \\
+       \cite{Park2016}       & --   & 46.7 & 44.7 & --   & --   \\
+       Lock-in onset $U_r$   & 4.18 & 5.59 & 6.49 & 5.43 & 4.63
+  \end{tabular}
+  \caption{Comparison of critical Reynolds numbers  $Re_{cr}$ between 
+  the available literature and the
+  predicted values by ERA-based ROM for different topologies of bluff bodies.
+  The onset reduced velocity $U_r$ of VIV lock-in from the present study 
+  is also outlined in the last row.
+  }
+  \label{tab:Recr_topology}
+  \end{center}
+\end{table}
+
+
+To further elucidate the lock-in mechanism, we plot  
+the root loci and the real and imaginary parts of eigenvalues 
+for the additional three bluff bodies in figure \ref{fig:topology1}. 
+The figure clearly shows that the geometry of bluff body has a significant impact 
+on the eigenvalue trajectory. The elliptical configuration
+has the lowest lock-in onset $U_r$ followed by the diamond 
+and the forward triangle configurations as shown in table \ref{tab:Recr_topology}.
+%
+%Figure \ref{fig:topology1_eig23} shows the amplification rate  
+%and the frequency  for the three geometries. 
+%
+Compared to the circular cylinder at the identical condition 
+of $(Re,m^*)=(60,10)$, the root loci of SM and WM coalesce 
+for the diamond, ellipse and forward triangle configurations.
+Similar to the low mass ratio effect during the VIV of circular cylinder, 
+both the branches exchange their roles 
+and no distinction can be made between the WM and SM for the three geometries.
+Therefore, we consider the  coupled modes WSMI and WSMII 
+to classify the stability characteristics for these geometries.
+% Growth curves
+When the intersection of growth rate curves corresponding the WSMI and WSMII 
+occurs in figure \ref{fig:topology1_eig23} (top), 
+the stability roles of WSMI and WSMII switch at a specific value of $F_s$ for the 
+three geometries.
+% Frequency
+As shown in figure \ref{fig:topology1_eig23} (bottom),
+the two curves of Im$(\lambda)$ for the three geometries  no longer cross, 
+in comparison to the circular cylinder counterpart at the identical conditions.
+Owing to stronger coupling, there is 
+a characteristic anticrossing with a frequency splitting between the WSMI and WSMII
+for the three geometries.  
+%whereby the frequency splitting can be quantified as 
+%$\Delta f = [\mathrm{Im}(\lambda/2\pi)_\mathrm{WM} 
+%-\mathrm{Im}(\lambda/2\pi)_\mathrm{SM}]$.
+%The elliptical cylinder has a larger anticrossing, which suggests that it has a 
+%greater coupling strength as compared to other configurations 
+%at the identical operational parameters.
+In addition, the forward triangle branch departs further away from the line $f=2\pi F_s$ 
+as compared to the diamond and elliptical cylinders.
+
+% Diamond and ellipse
+In contrast to the square cylinder ($0^0$ degree flow incidence) at $(Re,m^*)=(60,10)$, the diamond configuration 
+has a flutter-dominated VIV lock-in. This difference in the lock-in behavior can be attributed 
+to the boundary layer movement over the front edges of the diamond cylinder, whereby 
+the square cylinder has flow separations at the upstream corners 
+and inhibits the co-existence of flutter and resonance regimes.
+
+%% eigenvalue trajectory 
+% circular, equilateral triangle 
+ 
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig20a}
+    \caption{}
+    \label{fig:topology1_eig1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig20b}
+	\caption{}
+	\label{fig:topology1_eig23}
+	\end{subfigure}	
+        \caption{Effect of geometry on the eigenspectrum of ERA-based ROM at $(Re,m^*)=(60,10)$: 
+        (a) root loci as a function of the reduced natural frequency $F_s$, 
+         where the unstable right-half (Re$(\lambda) > 0$) plane is shaded in grey color  
+         and the hollow arrow indicates increasing $F_s$, 
+         (b) real and imaginary parts of root loci. 
+          WSMI data are denoted by the filled symbol with the same shape as WSMII in (a,b).  
+          The onset $U_r$ is computed on $F_s=0.184$ (forward triangle {\protect\bluedashdot}),
+           $F_s=0.216$ (diamond {\protect\reddashdot}), and $F_s=0.239$ (ellipse {\protect\greendashdot}), in the real parts of the 
+           root loci in (b), respectively.}
+	\label{fig:topology1}
+\end{figure}
+
+
+ %%%%%%% figure for VIV FEM
+ 
+ \begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig21a}
+    \caption{}
+    \label{fig:train1_y}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig21b}
+	\caption{}
+	\label{fig:train1_f}
+	\end{subfigure}	
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+% \includegraphics[scale=0.3]{trian1_cl}
+%	\caption{}
+%	\label{fig:trian1_cl}
+%	\end{subfigure}	
+%\begin{subfigure}{0.495\textwidth} 
+%\centering
+% \includegraphics[scale=0.3]{trian1_phi}
+%	\caption{}
+%	\label{fig:trian1_phi}
+%	\end{subfigure}
+        \caption{VIV results of the forward triangle configuration using 
+        FOM at $(Re,m^*)=(60,10)$: variation of 
+      (a) normalized vortex shedding frequency $f$ and 
+      (b) rms value of lift coefficient ($C_l$) and maximum amplitude ($Y_{max}$).
+      The lock-in is shaded in grey color.}
+	\label{fig:trian1_re60_fem}
+\end{figure}
+
+For the forward triangle configuration, it is notable that the WSMI and WSMII remain unstable 
+for $F_s \le 0.184$ or $U_r \ge 5.43$, as predicted by the ERA-based ROM, 
+which indicates that flutter-dominated-VIV persists.
+Therefore, the forward triangle is of particular interest for the present study.
+%
+These linear stability results have been confirmed by the FOM simulations, as shown 
+in figure \ref{fig:trian1_re60_fem}. The amplitude grows continually for $F_s \le 0.184$ or $U_r \ge 5.43$, 
+and the lift coefficient reaches to the maximum value at the lock-in onset $U_r$, which is similar to the circular 
+and square cylinders. The vortex shedding frequency starts to synchronize with 
+the structure natural frequency and there exists 1:1 frequency synchronization whereby 
+the body is synchronized with the vortex shedding frequency. 
+The transverse amplitude grows continually as $F_s$ decreases ($U_r$ increases), 
+which is referred to as the galloping-dominated flow-induced vibration. 
+This galloping regime is characterized by a low frequency and a high amplitude vibration, whereas a circular cross-section is not susceptible to the galloping.
+%
+For $F_s < 0.085$ ($U_r > 11.76$), the amplitude experiences a small but 
+distinct increase in the amplitude, and the 1:3 synchronization gradually appears 
+as shown in figure \ref{fig:3harmonic}.
+%after the energy switch. 
+In this regime, there is net energy transfer from the base flow with the frequency component at three times 
+the body oscillation frequency. During this energy transfer, the fluid force performs 
+work on the body, which stores the energy in the form of kinetic energy as well as the potential energy in the spring. 
+%
+To further elucidate the high harmonic response for the forward triangle, figure \ref{fig:3harmonic} 
+depicts motion and lift force traces with their corresponding spectra. 
+In the figure, there is a  clear third-harmonic frequency in the lift force whereby the body oscillates with a dominant frequency.
+Figure \ref{fig:vor_backward} shows the instantaneous vorticity contours at different values 
+of reduced natural frequency $F_s$.
+The wake mode is 2S for $F_{s}=0.17$, which remains 2S for $F_{s}=0.15$ with somewhat 
+increased spacing between the vortices shed alternately from each side of the cylinder.
+By further decreasing $F_s$ to 0.1, the strong SM and WM interactions result into the 
+larger vibration amplitude and the flow diverges to a wide vortex street.
+%%
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.35]{fig22a}
+    \caption{}
+    \label{fig:Fs_05_y}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig22b}
+	\caption{}
+	\label{fig:Fs_05_y_f}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig22c}
+	\caption{}
+	\label{fig:Fs_05_cl}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.35]{fig22d}
+	\caption{}
+	\label{fig:Fs_05_cl_f}
+	\end{subfigure}
+        \caption{Full order VIV results for forward triangle with 1:3 synchronization:
+        temporal variation of 
+        (a) transverse amplitude, and (c) lift coefficient; 
+        normalized power spectrum $P$ versus $f^*$ of: 
+        (b) transverse amplitude, (d) lift coefficient at $F_s=0.05$, where  $f^*=f/F_s$ 
+        is the frequency of lift and transverse displacement normalized 
+        by reduced natural frequency $F_s$. 
+        A third-harmonic frequency is evident in $C_l$.}
+	\label{fig:3harmonic}
+\end{figure}
+
+%%%%%%% figure for VIV vorticity contour at different Fs
+ 
+ \begin{figure}
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.3]{fig23a}
+    \caption{}
+    \label{fig:trian1_fs005}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig23b}
+	\caption{}
+	\label{fig:trian1_fs010}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig23c}
+	\caption{}
+	\label{fig:trian1_fs015}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig23d}
+	\caption{}
+	\label{fig:trian1_fs017}
+	\end{subfigure}	
+        \caption{Full order results for the forward triangle cylinder at  $(Re, m^*)=(60, 10)$:
+                Instantaneous vorticity contours at $F_{s}=$ (a) 0.05, (b) 0.1, (c) 0.15, (d) 0.17. 
+Contour levels are from -0.5 to 0.5 in increment of 0.077 and the flow is from left to right.}
+	\label{fig:vor_backward}
+\end{figure}
+
+The geometry of bluff body alters the flow structures significantly 
+in the vicinity of base flow, 
+resulting into different root loci and subsequently changing the stability properties. For example, as shown in figure \ref{fig:square_eig}, 
+the sharp corner of square stabilizes the flow and the resonance mode dominates 
+the entire lock-in for $(Re,m^*)=(60,10)$. 
+%
+It can be further elucidated by 
+looking into the magnitude of leading modal velocity 
+$|\widehat{U}|$ for the different geometrical configurations. 
+As illustrated in figure \ref{fig:mode_topo}, the stability regions
+of ellipse, diamond and triangle geometries shift upstream in comparison to  
+circular geometry, indicating the coupling 
+effect is enhanced. The stationary configurations of ellipse, diamond and forward triangle have 
+the quite similar stability regions.  
+%
+% this part need to be revised carefully 
+%{\color{red} As shown in Table~\ref{tab:Recr_topology}, the ellipse requires the smallest the reduced velocity onset of VIV, 
+%followed by diamond, triangle, circular and square.}
+The forward triangle is easier to perturb from the flow unsteadiness, 
+or by a Hopf bifurcation 
+for alternate vortex shedding. However, the sharp corners generally stabilize the 
+the fluid-structure system, 
+as the separation point are constrained and there is 
+lesser freedom for the interaction of flow and structural modes. 
+Due to this attribute in the forward triangle configuration, 
+there is a delay in lock-in onset $U_r$ with the identical operating 
+parameters $(Re,m^*)$ as compared to the elliptical cylinder.  
+
+ %%%%%%% figure for leading mode 
+ 
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+	 \includegraphics[scale=0.3]{fig24a}
+    \caption{}
+    \label{fig:ellipse_re60}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig24b}
+	\caption{}
+	\label{fig:square_re60}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig24c}
+	\caption{}
+	\label{fig:trian1_re60}
+	\end{subfigure}	
+\begin{subfigure}{0.495\textwidth} 
+\centering
+     \includegraphics[scale=0.3]{fig24d}
+	\caption{}
+	\label{fig:trian2_re60}
+	\end{subfigure}	
+     \caption{Stability regions shown by the spatial distribution of pointwise 
+     modal velocity amplitude $|\widehat{U}|$ at $Re=60$: contours of modal velocity for
+     (a) circle, (b) ellipse,
+      (c) diamond, and (d) forward triangle configuration. 
+       The flow is from left to right.}
+\label{fig:mode_topo}
+\end{figure} 
+
+
+ 
+\begin{figure}
+\centering
+    \includegraphics[scale=0.5]{fig25}
+     \caption{Stability phase diagram of VIV lock-in for transversely vibrating two-dimensional bluff bodies with 
+     smooth curves and sharp corners for $ 30 \le Re \le 100$, $m^*=10$ and $0.05 \le F_s \le 0.25$. Here the solid curve 
+     ({\protect\greensolid}) represents the critical Reynolds number ($Re_{cr}$) of the fixed bluff body and 
+     flutter- and resonance-induced regimes are demarcated, where 
+     ${\color{blue} \square}$ represents the co-existence of flutter and resonance regimes; 
+     ${\color{red} \bigcirc}$ denotes resonance regime; $\triangle$ represents flutter regime.
+     For $Re > Re_{cr}$, flutter regime comprises both unstable eigenvalues (Re$(\lambda) > 0$) 
+     of WM and SM, whereas resonance regime has only unstable WM.
+     }
+         \label{fig:top_chart}
+\end{figure}
+
+%%% chart for different topology 
+Figure \ref{fig:top_chart} summarizes the stability regimes of 
+transversely vibrating bluff bodies 
+for Reynolds number range $ 30 \le Re \le 100$. In this figure, the solid curve
+({\protect\greensolid}) depicts 
+the trend for the critical Reynolds number. The following observations can be made from 
+the stability phase diagram. The geometries of circle, ellipse and diamond exhibit 
+the flutter and mixed resonance-flutter modes. In contrast to the square counterpart, 
+the diamond geometry has a movement of asymmetric boundary layers on the front lateral 
+edges which allows the co-existence of flutter and resonance modes. For the 
+elliptic cylinder, the mixed flutter-resonance regime occurs at lower Reynolds number, 
+in comparison to the circular cylinder.
+Notably, the forward triangle configuration 
+only shows the flutter-induced lock-in regime for this range of Reynolds number and the edges are in 
+the leeward side with separated flow. 
+Finally, the square-section body shows predominant resonance regime for $ 30 \le Re \le 80$, approximately, 
+which turns into the flutter state for $Re > 80$.
+
+%%% 3D discussion
+The present ERA-based ROM study has been concerned about two-dimensional bluff body configurations 
+for which only two directions in space are resolved. All the notions of ROM, such as 
+base flows, eigenvalue realization can be easily extended to full 
+three-dimensional settings. Thus the present method does not pose any theoretical limitation 
+except there may be numerical one with respect to memory requirements and CPU time 
+to solve the generalized eigenvalue problem.  
+ 
+
+
+%ccccccccccccccccccccccc
+\section{Concluding remarks}
+In this study, we presented the ERA-based model reduction 
+for the coupled fluid-structure analysis to investigate the stability characteristics 
+of the vortex-induced vibrations of bluff bodies. The ERA-based ROM relies on
+the singular value decomposition of a Hankel matrix constructed from the impulse response of the Navier-Stokes equations.
+The present study has remarkably demonstrated the effectiveness of 
+ERA-based ROM for predicting the unstable wake flow behind a stationary circular cylinder.
+The critical Reynolds number and the flow dynamics were well predicated and an 
+excellent agreement was found with the full order model and the available literature.
+%as it does not need an adjoint solver.
+We next employed the ROM for a unified description of the lock-in phenomenon 
+as a function of Reynolds number $Re$, the mass ratio $m^*$, 
+and for the investigation of the effect of rounding  and various geometrical shapes.
+%% Development of ERA-based ROM
+%
+To investigate the VIV mechanism, the ERA-based ROM has been extended to construct 
+the fluid ROM and coupled with a linear structure to form a reduced fluid-structure system 
+in the state space format. 
+%
+Two distinct lock-in patterns of flutter- and resonance-induced regimes 
+were investigated by the ERA-based ROM 
+for a transversely vibrating circular cylinder at the baseline parameters of 
+$(Re,m^*)=(60,10)$.
+While the resonance state has the unstable WM together with the stable SM  
+in the range $0.11 \le F_{s} \le 0.147$, the flutter regime 
+has the co-existence of the unstable  SM and WM in the range $0.147 < F_{s} \le 0.179$.
+In comparison to the linear ROM used in \cite{Zhang2015},
+which is sensitive to the training trajectory, 
+the proposed ERA-based ROM is sufficiently accurate and only requires the impulse response of unstable fluid system. 
+To generalize the proposed ERA-based ROM for the VIV linear stability analysis, 
+the effects of Reynolds number, the rounding of square cylinder 
+and the geometry have been systematically examined and compared against the full order simulations.
+Based on the systematic parametric study, the following conclusions can be drawn:
+% effect of Re 
+\begin{enumerate}
+\item{
+The study on the effect of Reynolds number demonstrates
+that the flutter and resonance regimes do not always exist during the lock-in phenomenon. 
+For $m^*=10$, it was found that the flutter and resonance regimes 
+co-exist for $Re_{cr} < Re < 70$. 
+The flutter-induced regime gradually dominates the entire lock-in region 
+when $Re \ge 70$. The finding is consistent 
+with the theoretical analysis of \cite{DeLangre2006} for high Reynolds number. 
+The stability region provides an explanation that it shifts upstream as $Re$ increases,
+indicating the coupling between unstable wake and bluff body is enhanced. 
+Another observation is that the reduction of rms value of lift force 
+is not associated with either resonance or flutter state, but closely related to the 
+phase angle jump from $0^0$ to $180^0$, which is also demonstrated during the lock-in of
+square cylinder.}
+
+%% Effect of rounding
+\item{ 
+The analysis on the rounding effect of square cylinder study at $(Re,m^*)=(60,10)$ 
+shows that the rounding 
+has a remarkable impact on the flutter and resonance regimes.
+The flutter regime can be promoted by gradually removing the sharp corners. 
+The sharp corners suppress the continuous movement of separation points and 
+the WM loop of the square cylinder is smaller than the circular cylinder counterpart.
+As the rounding radius $r_s$ increases, the SM trajectory moves gradually towards the 
+positive real axis and the flutter region starts to appear. From the comparison of 
+leading modes, the stability region shifts downstream as the rounding radius $r_s$ decreases.
+There is a reduction in the coupling strength between the fluid and structure due to 
+the presence of sharp corners, which inhibit the movement of separation points 
+and the susceptibility of inertial coupling. In comparison to the VIV of circular cylinder, 
+this study also explains why the lock-in onset $U_r$ is larger and the lock-in region is narrower for a square cylinder.   
+}
+
+%% Effect of topology
+\item{
+The geometry study reveals that the cross-sectional shape significantly alters the VIV and galloping instability.  
+The ERA-based ROM can effectively capture the stability properties and the lock-in regimes 
+for the elliptical, forward triangle and diamond-shaped configurations.
+It is found that root loci of WM and SM coalesce and form coupled modes for these geometries. 
+We have provided further 
+insights into the phenomena of flow-induced vibration by the ERA-based ROM for these bluff-body geometries.
+The elliptical cylinder was found to have the lowest $U_r$ for the lock-in onset 
+followed by the diamond and the forward triangle configurations.
+Of particular note for the forward triangle VIV, 
+the ROM predicts the flutter-dominated VIV persists for $F_s \le 0.184$ or $U_r \ge 5.43$. 
+A low-frequency galloping instability and a kink in the amplitude response associated
+with 1:3 synchronization were observed  in the forward triangle configuration.
+We presented a summary phase diagram to characterize the effects of geometry
+on the VIV stability regimes based on the eigenspectrum distribution.  Such phase diagram based 
+on the linear dynamics of lock-in process provides insights to develop a unified description of flow-induced vibration.
+The phase diagram shows that the resonance mode only exists for a certain range of Reynolds number. 
+The VIV lock-in mechanism is eventually dominated by the flutter mode as the Reynolds number increases. 
+}
+\end{enumerate}
+
+% General impact and way forward
+The proposed ERA-based ROM is demonstrated to be accurate and efficient for 
+the VIV linear stability analysis of bluff bodies, 
+which has a relevance in the development of flow control strategies.
+By shifting the unstable eigenvalues of WM and SM 
+to the stable left half complex plane, suppression of vortex street and VIV 
+can be achieved by the model. The simplicity of the model permits investigation of a range of geometries 
+and parameters on VIV mechanism and paves the way for a bottom up approach to develop 
+control devices.
+%
+We want to emphasize that we have considered only linear dynamical systems in this study, 
+possible future direction should include an extension of the system identification process
+to nonlinear systems.
+%
+In the future, there is also need for further investigation at high Reynolds number
+to expand the proposed model reduction approach for a generalized lock-in description 
+with a wider parameter space of mass-damping parameter.
+
+%\section*{\bf{Acknowledgements}}
+The first author would like to thank Singapore Maritime Institute Grant (SMI-2014-OF-04) 
+for the financial support.
+
+\appendix
+\renewcommand\thefigure{B.\arabic{figure}}
+\renewcommand{\theequation}{A.\arabic{equation}}
+\section*{Appendix A: Derivation of Phase Angle for VIV}
+By considering the cylinder motion and fluid forcing as sinusoidal functions, the displacement and lift coefficient can be obtained  for the VIV linear system as
+\begin{equation}
+\left. \begin{array}{ll}
+\displaystyle Y=\hat{Y} e^{\lambda_r t}\cos(\lambda_i t)  \\[8pt]
+\displaystyle C_l=\hat{C_l} e^{\lambda_r t}\cos(\lambda_i t + \phi)
+\end{array}\right\},
+\label{eq:linear_y_cl}
+\end{equation}
+where $\lambda=\lambda_r+i\lambda_i$ is eigenvalue with real $\lambda_r$ 
+and imaginary $\lambda_i$ components, $\hat{Y}$ and $\hat{C_l}$ 
+denote the magnitudes of eigenmodes. The phase angle $\phi$ can be derived by plugging Eq. (\ref{eq:linear_y_cl}) 
+into the structural Eq. (\ref{eq:structure1}) as
+\begin{equation}
+\begin{array}{cc}
+[\hat{Y}e^{\lambda_r t} (\lambda_r^2 - \lambda_i^2 + 4 \pi \zeta F_s \lambda_r + (2 \pi F_s)^2) 
+- \frac{a_s \hat{C_l} e^{\lambda_r t} \cos{\phi}}{m^*}] \cos{\lambda_i t} \\
++ [\hat{Y}e^{\lambda_r t}(-2 \lambda_r \lambda_i - 4 \pi \zeta F_s \lambda_i) + 
+ \frac{a_s \hat{C_l} e^{\lambda_r t} \sin{\phi}}{m^*}] \sin{\lambda_i t} = 0.
+\end{array}
+\label{eq:phase1}
+\end{equation}
+From equating the coefficients of $\cos(\lambda_i t)$ and $\sin(\lambda_i t)$ to zero, 
+we obtain the following relations:
+\begin{equation}
+\begin{array}{cc}
+\hat{Y}e^{\lambda_r t} (\lambda_r^2 - \lambda_i^2 + 4 \pi \zeta F_s \lambda_r + (2 \pi F_s)^2) 
+- \frac{a_s \hat{C_l} e^{\lambda_r t} \cos{\phi}}{m^*} = 0, \\
+\hat{Y}e^{\lambda_r t}(-2 \lambda_r \lambda_i - 4 \pi \zeta F_s \lambda_i) + 
+ \frac{a_s \hat{C_l} e^{\lambda_r t} \sin{\phi}}{m^*} = 0.
+\end{array}
+\label{eq:phase2}
+\end{equation}
+By solving Eq. (\ref{eq:phase2}) and setting $\zeta = 0$, 
+$\sin{\phi}$ and $\cos{\phi}$ can be obtained as
+\begin{equation}
+\begin{array}{cc}
+\sin{\phi} = \frac{2 \hat{Y} \lambda_i \lambda_r m^*}{a_s \hat{C_l}}, \\
+\cos{\phi} = \frac{\hat{Y} m^*(\lambda_r^2 - \lambda_i^2 + (2 \pi F_s)^2)}{a_s \hat{C_l}}.
+\end{array}
+\end{equation}
+Through the trigonometric identity $\cos^2{\phi} + \sin^2{\phi} = 1$, 
+the term $\sin{\phi}$ can be further simplified in terms of $(\lambda, F_s)$ as follows:
+%\begin{equation}
+%\sin{\phi} = \frac{2\lambda_r\lambda_i}{\sqrt{(\lambda_r^2  \\
+% - \lambda_i^2 + (2\pi F_s)^2)^2 + (2\lambda_i \lambda_r)^2 }}
+%\end{equation}
+\begin{equation}
+\sin{\phi} = \frac{2\lambda_r\lambda_i}{\sqrt{(\lambda_r^2  \\
++ (2\pi F_s)^2 + \lambda_i^2)^2 - (4\pi\lambda_i F_s)^2 }}.
+\end{equation}
+%% 
+\section*{Appendix B: Effect of mass ratio}
+\setcounter{figure}{0}
+For the illustration of ERA-based ROM, the effect of mass ratio is shown in
+figure \ref{fig:dfms_eig} for $m^*=(5,7.6,20)$ at $Re=60$. 
+Figure \ref{fig:dfms_eig23} shows the real and imaginary parts of the root loci as 
+a function of reduced frequency $F_s$. 
+It indicates the lock-in onset starts to move 
+to the lower reduced velocity ($U_r=1/F_s$) regime as 
+the mass ratio $m^*$ decreases. 
+As expected, owing to weaker fluid-structure coupling for 
+larger mass ratio $m^*=20$, the eigenfrequency of WM recovers to 
+the frequency of stationary cylinder and the frequency of SM approaches to 
+the natural frequency of the cylinder-only system as $F_s$ increases. 
+%% branches merging 
+As the mass ratio decreases further, 
+figure \ref{fig:dfms_eig1} shows that the root loci of SM and WM
+gradually \emph{coalesce} and form a coupled mode due to the 
+increased strength of fluid-structure coupling.
+The approximate threshold mass ratio is $m^{*} \approx 7.6$ for 
+the coupled mode, which is very 
+close to the predicted $m^{*}=7.3$ in \cite{Zhang2015}.  %The eigenfrequency 
+The phenomenon is termed as mixed WM/SM \citep{meliga2011} 
+or coupled fluid-elastic mode \citep{mittal2016}. 
+As illustrated in figure \ref{fig:dfms_eig23}, for the mass ratio $m^*=5$, 
+the coupled wake-structure modes WSMI and WSMII 
+resemble to the SM and WM, respectively for $F_s \le 0.175$, 
+whereas WSMI and WSMII resemble to the standard
+WM and SM, respectively for $F_s > 0.175$. 
+%
+This finding suggests that 
+the stability roles of WM and SM switch at a specific value of $F_s$, 
+where the two growth rate Re$(\lambda)$ curves of WSMI and WSMII intersect. 
+%
+The flutter regime for $m^*=5$ is then defined by 
+$0.165 < F_s \le 0.197$ ($5.08 \le U_r < 6.07$),
+as shown in figure \ref{fig:dfms_eig23}, which
+matches well with the results of \cite{mittal2016} ($5.0 \le U_r < 6.0$) 
+at the identical conditions.  
+%
+In figure \ref{fig:dfms_eig23} (bottom),
+the two curves of Im$(\lambda)$ for $m^*=(5,7.6)$ no longer cross and there is 
+a characteristic anticrossing with a frequency splitting ($\Delta f$) between the WSMI and WSMII.
+This phenomenon of anticrossing is an intrinsic property of strong coupling 
+at low mass ratio, as reported for generic coupled mechanical 
+oscillators in \cite{novotny2010}. 
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.495\textwidth}
+\centering
+    \includegraphics[scale=0.3]{fig26a}
+    \caption{}
+    \label{fig:dfms_eig1}
+    \end{subfigure} 
+\begin{subfigure}{0.495\textwidth} 
+\centering
+ \includegraphics[scale=0.3]{fig26b}
+	\caption{}
+	\label{fig:dfms_eig23}
+	\end{subfigure}	
+        \caption{Effect of mass ratio on the eigenspectrum of ERA-based ROM for a circular cylinder at $m^*=(5,7.6,20)$ and $Re=60$: 
+        (a) root loci as a function of the reduced natural frequency $F_s$, 
+         where the unstable right-half (Re$(\lambda) > 0$) plane is shaded in grey color  
+         and the hollow arrow indicates increasing $F_s$, 
+         (b) real and imaginary parts of root loci. 
+        In (b), growth rate Re$(\lambda)$ curves of WSMI and WSMII intersect at $F_s=0.175$ ({\protect\reddash}) and 
+        the flutter regime is defined between $F_s=0.197$ ({\protect\reddashdot})
+        and $F_s=0.165$ ({\protect\reddot}) for $m^*=5$.  The frequency anticrossing 
+        is shown in the inset of Im$(\lambda)$ plot.
+        The WSMI and SM branches are denoted by the filled symbol with the same shape 
+        as WSMII and WM in (a,b). }
+	\label{fig:dfms_eig}
+\end{figure}
+
+
+
+\bibliographystyle{jfm}
+% Note the spaces between the initials
+\bibliography{refs}
+
+\end{document}

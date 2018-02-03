@@ -1,0 +1,1594 @@
+% This is file JFM2esam.tex
+% first release v1.0, 20th October 1996
+%       release v1.01, 29th October 1996
+%       release v1.1, 25th June 1997
+%       release v2.0, 27th July 2004
+%       release v3.0, 16th July 2014
+%   (based on JFMsampl.tex v1.3 for LaTeX2.09)
+% Copyright (C) 1996, 1997, 2014 Cambridge University Press
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% package include 
+
+
+\documentclass[standard]{jfm}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage{epstopdf, epsfig}
+\usepackage{color,soul} %highlight with color
+\graphicspath{{./figures_num/}} % Specifies the directory where pictures are stored
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage{subfloat}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{tikz}
+%\usepackage{hyperref}
+%\usepackage{url}
+%\usepackage{amsbsy}
+%\usepackage{amsfonts}
+%\usepackage{booktabs,array,dcolumn} 
+%\usepackage{ulem}
+
+\newsavebox{\largestimage}
+%%======================New commands============================================
+\newcommand{\todo}[1]{\textcolor{blue}{#1}}
+\newcommand{\changes}[1]{\textcolor{magenta}{#1}}     %%defined a new function to trace changes by modfiy font color
+\def\vec#1{\mbox{\boldmath $#1$}}
+\newcommand{\bx}{\mathbf{\chi}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bnx}{\mathbf{n_x}}
+\newcommand{\bny}{\mathbf{n_y}}
+\newcommand{\bs}{\boldsymbol{\sigma}}
+\newcommand{\disnum}[1]{\texttt{#1}}
+\def\Otf{\Omega^\mathrm{f}(t)}
+\def\bz{\mathbf z}
+\newcommand{\xx}{\mbox{$\mathbf{x}$}}
+\def\strain{\vec \epsilon}
+\def\stress{{\vec \sigma}}
+\def\div{\vec \nabla}
+
+\usepackage{environ}
+\NewEnviron{myequation}{%
+\begin{equation}
+\scalebox{0.7}{$\BODY$}
+\end{equation}
+}
+%\usepackage{placeins}
+%\usepackage{tabularx}
+%\usepackage{epstopdf}
+%\usepackage{afterpage}
+%%=======================================================================================
+\newcommand{\red}{\raisebox{2pt}{\tikz{\draw[red,solid,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\green}{\raisebox{2pt}{\tikz{\draw[green,solid,line width=1.2pt](0,0) -- (5mm,0);}}}
+\newcommand{\blue}{\raisebox{2pt}{\tikz{\draw[blue,solid,line width=1.2pt](0,0) -- (5mm,0);}}}
+% For multiletter symbols
+%\newcommand\Real{\mbox{Re}} % cf plain TeX's \Re and Reynolds number
+%\newcommand\Imag{\mbox{Im}} % cf plain TeX's \Im
+%\newcommand\Rey{\mbox{\textit{Re}}}  % Reynolds number
+%\newcommand\Pran{\mbox{\textit{Pr}}} % Prandtl number, cf TeX's \Pr product
+%\newcommand\Pen{\mbox{\textit{Pe}}}  % Peclet number
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\shorttitle{Feedback control of vortex-induced vibration}
+\shortauthor{W. Yao and R. K. Jaiman}
+
+\title{Feedback Control of Unstable Flow and Vortex-Induced Vibration Using  
+       Eigensystem Realization Algorithm}
+
+\author{W. Yao
+  \and  R. K. Jaiman
+   \corresp{\email{mperkj@nus.edu.sg}}
+  }
+ 
+\affiliation{Department of Mechanical Engineering, National University Singapore, Singapore 119077}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+%%%%%%%%
+\begin{abstract}
+% Premise: Key elements of VIV are linear and can be controlled by active blowing/suction.
+We present an active feedback blowing and suction (AFBS) procedure 
+via model reduction for unsteady wake 
+flow and the vortex-induced vibration (VIV) of circular cylinders. 
+The reduced-order model (ROM) for the AFBS procedure is developed by 
+the eigensystem realization algorithm, which provides a low-order representation of 
+the unsteady flow dynamics in the neighbourhood of equilibrium steady state. 
+%
+The actuation is considered via vertical suction and blowing jet at the porous surface
+of circular cylinder with the body mounted force sensor. 
+While the optimal gain is obtained using the linear quadratic regulator(LQR),
+the Kalman filtering is employed to estimate the approximate state vector. 
+%
+The feedback control system shifts the unstable eigenvalues of the wake flow and 
+the VIV system to the left half complex plane, and subsequently
+results into the suppression of the vortex street and the VIV in 
+elastically  mounted structures. 
+The resulting controller designed by linear low-order approximation is 
+able to suppress nonlinear saturated state of wake vortex shedding from the circular cylinder. 
+%
+A systematic linear ROM-based  stability analysis is performed to understand the eigenvalue 
+distribution for the flow past stationary and elastically mounted circular cylinders. 
+%
+Results from the ROM analysis are consistent with those obtained from full nonlinear 
+fluid-structure interaction simulations, thereby confirming the validity of the proposed ROM-based AFBS procedure.
+%
+A sensitivity study on the number of suction/blowing actuators, 
+the angular arrangement of actuators, 
+and the combined versus independent control architectures has been performed for the 
+flow past a stationary circular cylinder.
+%
+Overall, the proposed control concept based the ERA-based ROM and LQR algorithm
+is found to be effective to suppress the vortex street and 
+the vortex-induced vibration for a range of reduced velocity and mass ratio. 
+
+\end{abstract}
+
+\begin{keywords}
+feedback control, low-dimensional models, vortex-induced vibration
+\end{keywords}
+
+%%%%%%%%
+\section{Introduction}\label{sec:intro}
+% Passive VIV control (not effective)
+Successful control of vortex-induced vibration (VIV) can lead to 
+safer and cost-effective structures in offshore, aeronautical and civil engineering. 
+In the past several decades, various passive control techniques \citep{owen2001,Choi2008,Baek2009,Yu2015,Law2017} have been explored 
+via geometry modification and by adding auxiliary surfaces to alter the flow dynamics without any energy input. 
+While the passive VIV control methods offer some simplicity, 
+they do not have the ability to work on-demand and may not be effective from 
+the perspective of wake stabilization, drag reduction and VIV suppression 
+in a wide range of operational conditions.
+More importantly, the passive devices e.g. strakes, splitter plate or fairings 
+are not easy to implement for certain situations such as  square-shaped 
+multicolumn offshore platforms \citep{chakrabarti} and subsea pipelines undergoing VIV in the proximity with seabed floor \citep{sumer}. 
+%
+The motivation of this study is to develop a feedback active 
+control algorithm based on reduced-order model and to demonstrate the algorithm 
+to stabilize the wake flow and the VIV for a canonical two-dimensional circular cylinder 
+problem. To investigate the proposed control scheme, we consider the flow past a 
+stationary circular cylinder at low Reynolds number, $Re=UD/\nu$ 
+and the vibrating cylinder as a function of reduced velocity, $U_r=U/(f_{N}D)$  and 
+mass ratio, $m^*=4 m/({\rho \pi D^{2}})$ with zero mass-damping parameter, $m^* \zeta = 0.0$. 
+Here $U$, $\rho$, $m$, $D$, $f_{N}$, $\zeta$ and $\nu$ are the freestream velocity, 
+the density of fluid, the mass per unit length of cylinder, the diameter of cylinder, 
+the structural natural frequency, the damping ratio and the kinematic viscosity, respectively.
+
+% Need for active control and blowing/suction
+%Different types of flow control strategies have been developed and successfully implemented
+%for the flow past a circular cylinder, such as optimal control techniques, full-state feedback
+%control, neural networks, and proportional closed-loop control.
+%For an active flow control of the cylinder wake, various actuation mechanisms are employed,
+%such as cylinder rotation, crossflow motion, and fluidic actuation on the cylinder surface. 
+Through external input of small tunable energy into the surrounding flow, active VIV control 
+techniques offer a better alternative due to their adaptive and efficient performance.
+% Windward suction leeward blowing 
+\cite{Kim2005} utilized blowing/suction slots placed on the top and bottom of the circular cylinder to
+stabilize the unstable wake. The applied forcing in the slots was sinusoidal along the spanwise direction but kept steady in time.
+In another interesting study of \cite{Dong2008} the combined steady windward suction and leeward blowing (WSLB) was found as effective strategy to
+eliminate the vortex street and to suppress vortex-induced vibration in cross-flow direction.
+%
+This WSLB method in \cite{Dong2008} is essentially an active flow control (i.e. external energy 
+is required to maintain steady suction and blowing), but can be customized as a passive 
+technique by deploying porous surfaces to form connecting channels between the windward
+and leeward stagnation points of a circular cylinder.
+%
+The aforementioned blowing/suction control schemes
+provide only open-loop alteration of unsteady flow 
+whereby the control input is prescribed and is independent of the flow states.
+In another recent study, \cite{Wang2016b} utilized a windward-suction 
+and leeward-blowing feedback control to suppress VIV in both inline and cross-flow 
+directions at a specific condition $(m^*,U_r)=(2,5)$. 
+However, it is not certain whether the system is free of VIV
+for a range of reduced velocity $U_r$ and mass ratio $m^*$. 
+Moreover the simplified closed-loop control strategy based  on 
+the proportional (P), integral (I) and proportional-integral (PI) schemes 
+were applied to manipulate the WSLB velocities through the standard 
+deviation of surrounding flow velocity. The PI control was found to outperform the 
+P and I control schemes with respect to the effectiveness of VIV suppression.
+To the best of our knowledge, adaptive feedback control of VIV via vertical suction and blowing 
+has not been studied earlier. Furthermore, adaptive feedback control of VIV based on 
+the model reduction is not explored in earlier studies, which can be important 
+for both numerical and experimental settings. 
+% linear ROM 
+
+Various types of active flow control strategies have been explored for the flow past a circular cylinder, such as full-state feedback control, neural networks, and proportional closed-loop 
+feedback control. 
+In particular, active feedback or closed-loop control of unsteady flow past over a bluff body has 
+been recently investigated via numerical simulations \citep{Ahuja2010,parkin2014,Flinois2016}.  
+To implement the optimal linear control in an efficient manner, it is imperative to 
+develop a low-order linear model by retaining the significant dynamics of 
+the original system (\cite{Ahuja2010,Flinois2016}). 
+Linear ROM provides a way to trace the eigenspectrum of dynamical system,
+while maintaining about an order of magnitude efficiency improvement 
+to construct the essential dynamics of the system. Instead of deriving the
+system model directly from the linearized governing equations of the fluid flow, 
+the system identification method is particularly desirable, because 
+it is non-intrusive and can be used directly into an existing Navier-Stokes (NS) solver 
+to generate approximate system matrices using only the input-output data sequences. 
+Eigensystem realization algorithm (ERA) \citep{Juang1985} is a well-established system identification method to
+construct linear ROM from stable system linear impulse response. \cite{Ma2011} proved that the ROM constructed by
+ERA is mathematically equivalent to balance truncation. Recently, \cite{Flinois2015} provided a mathematical rigor that 
+unmodified balance truncation (designed for stable system) is applicable for unstable system. Based on the work of 
+\cite{Ma2011} and \cite{Flinois2015}, the ERA is used for the stabilization of unstable wake flow \citep{Flinois2016}.  
+%in which 
+%the actuation has been modelled as a body force and not an practical actuation representation. 
+%%%% contribution
+ 
+Although the suction/blowing control strategy has been extensively studied for unstable flow and 
+VIV past a circular cylinder both numerically \citep{Kim2005,Dong2008,mao2015,Wang2016b} 
+and experimentally \citep{Fransson20041031,Chen201325,Chen2015},
+the earlier research relies on open-loop control strategy, except the recent study 
+of \cite{Wang2016b} via simplified non-adaptive control procedure. \cite{Ahuja2010,Flinois2016} designed a feedback control law 
+to stabilize unstable wake flow over a plate and bluff body using model 
+reduction method, however the actuation is modelled as a body force and 
+may not be implemented as a practical actuator.
+%%
+The recognition of linear mechanism during the self-sustaining behavior of VIV in our recent study \citep{YaoJFM2016} inspires us to develop a feedback suppression strategy 
+based on a linear control theory. 
+Motivated by the insight about the frequency lock-in process during VIV, 
+it is possible to design a linear controller
+to minimize the unsteady vortex-shedding and the VIV effects. For that purpose,
+the control input based on vertical blowing and suction at the surface 
+can be utilized \citep{Kim2005}. 
+
+%%
+The key contribution of the paper is to develop an active feedback blowing and suction (AFBS) procedure based on ERA-based ROM to control the wake instability and the vortex-induced vibration. 
+Using the ERA method, a low-order fluid model is constructed, 
+and is coupled with the structure via the LQR optimal control scheme. The proposed 
+AFBS procedure ensures a VIV free system within a large parameter space of reduced 
+velocity ($U_r$) and mass ratio ($m^*$) and it can handle both one degree-of-freedom 
+(1-DOF) and two degree-of-freedom (2-DOF) VIV. 
+%The designed controller is then demonstrated to stabilize the unsteady wake flow and VIV. 
+The results from the ROM solver are compared with those of full-order 
+simulations based on the incompressible Navier-Stokes equations. 
+We employ the ROM model to predict the performance of the AFBS procedure through 
+the eigenvalue distribution in the complex plane.
+The present study is based on two questions pertaining to the VIV physics and control: 
+(i) can we suppress self-sustaining VIV by assuming linear lock-in mechanism?
+(ii) how much additional energy is required for the suppression of VIV 
+compared to the stationary nonlinear vortex shedding state? 
+
+The organization of the article is as follows.
+The numerical details of full order model based on the Navier-Stokes equations and the ERA-based reduced order model are presented in section \ref{sec:method}. 
+Section \ref{sec:results} introduces the active feedback control 
+based on the vertical suction and blowing for the unstable wake flow 
+of stationary cylinder and vortex induced vibration. 
+A sensitivity study on the number of 
+suction/blowing actuators, the angular arrangement of actuators 
+and the  combined versus independent control architecture 
+are also investigated in Section \ref{sec:results}. 
+Section \ref{sec:concluding} summarizes the main conclusions. 
+
+\section{Numerical methodology}\label{sec:method}
+\subsection{Problem setup}
+Figure \ref{fig:cylinder} shows a schematic of problem setup used in our simulation study 
+for a flexibly mounted circular cylinder in a flowing stream. 
+%The coordinate origin is located at the geometric center of the circular cylinder, 
+%the streamwise and transverse directions are denoted $x$ and $y$, respectively.
+At the inlet boundary $\mathrm{\Gamma_{in}}$, a stream of incompressible fluid 
+enters into the domain at a horizontal velocity $(u,v)=(U,0)$, where $u$ and $v$ 
+denote the streamwise and transverse velocities in $x$ and $y$ directions, respectively. 
+For the VIV configuration, the circular cylinder with mass $m$ is elastically mounted on a 
+linear spring and is allowed to vibrate only in the transverse direction. 
+No-slip wall condition is implemented on the surfaces of the bluff body, and a traction-free
+boundary condition is implemented along the outlet $\mathrm{\Gamma_{out}}$, 
+while the slip wall condition is implemented on the top $\mathrm{\Gamma_{top}}$
+and bottom $\mathrm{\Gamma_{bottom}}$ boundaries.
+Except stated otherwise, all length scales are normalized by 
+the cylinder diameter $D$ and velocities
+with the free stream velocity $U$.
+%
+The numerical domain extends from $-10D$ at the inlet to $30D$ at the outlet, 
+and from $-15D$ to $15D$ in the transverse direction.
+%For simplicity, $D=1$ is used for all computations below. 
+For the flow control, we consider blowing and suction on the porous cylinder 
+surface through fluidic actuators. It is known that 
+the moderate levels of suction/blowing into the surrounding flow can 
+have a great impact on the boundary layer, the separation point and  
+wake characteristics \citep{Fransson20041031,Chen201325,Chen2015}. 
+Through the active feedback control, the suction 
+mechanism can delay the separation of boundary layer 
+(i.e., narrower wake width and reduced drag), whereas 
+blowing can have an opposite effect. On the other hand, continuous blowing generally 
+tends to decrease the Strouhal number for the flow around a porous cylinder, 
+continuous suction has the opposite influence on the vortex shedding 
+frequency \citep{Fransson20041031}.
+
+In the present study,  we propose a feedback control based on  
+a configuration with three pairs of suction/blowing actuators,
+ as depicted in figure \ref{fig:blowing_suction}. 
+%
+In this proposed configuration, termed as $BS0$, there 
+are total six suction and blowing slots distributed over the cylinder surface, 
+with a pair of slots at the windward $\theta=(135 \degree, 225 \degree$), 
+at the midward $\theta=(90 \degree, 270 \degree)$
+and at the leeward $\theta=(45 \degree, 315 \degree)$ sides. 
+Here  $\theta$ is deviation angle between the centerline of each suction/blowing 
+actuation with respect to the base suction point.
+%While $BS0$ and $BS1$ form a  symmetric configuration,  
+%$BS2$ and $BS3$ are asymmetric with respect to the quadrants of cylinder.
+As shown in figure \ref{fig:blowing_suction}, the positive control input is defined as 
+suction from the bottom of the cylinder and blowing at the top surface. 
+Similar to \cite{pastoor2008}, we consider the actuation slot width to be 
+$\sigma_{c}=\pi D/72$, whereby the energy supply from the actuation 
+is characterized by the momentum coefficient as
+$C_\mu = {2 N \rho V^2_{c} \sigma_c}/{(\rho U^2 D)}$, 
+where $N$ is the number of slots, $V_c$ denotes the time dependent 
+suction and blowing velocity. 
+Owing to the body-conforming Lagrangian-Eulerian coupling for fluid-structure interaction, 
+the actuation conditions for the blowing and suction are accurately enforced by 
+the Dirichlet boundary condition.
+%as compared to previous studies based on body force \citep{Flinois2016} 
+%or counter rotating vortices \citep{Ahuja2010} in the immersed boundary framework.
+%  
+The present full-order fluid-structure model relies on 
+a variational finite-element formulation and a semi-discrete time stepping.
+While the Navier-Stokes equations are discretized in space 
+using $\mathbb{P}_{n}/\mathbb{P}_{n-1}$ iso-parametric finite elements 
+for the fluid velocity and pressure, 
+the second-order backward scheme is used for the time discretization, where 
+$\mathbb{P}_{n}$ denotes the standard $n^\mathrm{th}$
+order Lagrange finite element space on the discretized fluid domain. 
+%
+Details of the numerical techniques, the verification and the mesh convergence study 
+based on $\mathbb{P}_{2}/\mathbb{P}_{1}$ 
+iso-parametric elements are documented in \cite{YaoJFM2016}.
+
+\begin{figure}
+ \centering
+  % Store largest image in a box
+  \savebox{\largestimage}{\includegraphics[scale=0.6]{fig1a}}%
+    
+%  \hspace{1em}
+%  \hfill
+  \begin{subfigure}[b]{0.495\textwidth}
+    \centering
+    \usebox{\largestimage}
+    \caption{}
+   \label{fig:cylinder}  
+  \end{subfigure}
+  \begin{subfigure}[b]{0.495\textwidth}
+    \centering
+    % Adjust vertical height of smaller image
+    \raisebox{\dimexpr.5\ht\largestimage-.5\height}{%
+      \includegraphics[scale=0.7]{fig1b}}
+    \caption{}
+  \label{fig:blowing_suction}  
+  \end{subfigure}
+  \caption{Problem setup for feedback control of unsteady wake and vortex-induced vibrations: 
+           (a) computational domain and boundary conditions for 
+           the flow past a freely vibrating cylinder in uniform flow,
+           (b) proposed new actuator configuration $BS0$
+           through blowing/suction over the porous surface of circular cylinder. 
+           The positive control input is defined as 
+           suction from bottom and blowing at the top of cylinder. 
+%           While $BS0$ and $BS1$ form a  symmetric configuration,  
+%          $BS2$ and $BS3$ are asymmetric with respect to the quadrants of cylinder.
+}
+\label{fig:cylinder_suction}          
+\end{figure}
+
+%%
+
+%% actuator arrangement 
+%\begin{figure}
+%\centering
+%\includegraphics[scale=0.5]{suction2}
+% \caption{Blowing and suction actuation slots. The positive control input is defined as
+% suction from bottom and blowing at the top of the cylinder. $BS0$ and $BS1$ are symmetric; 
+% $BS2$ and $BS3$ are asymmetric.}
+%\label{fig:blowing_suction}  
+%\end{figure}
+
+\subsection{Full-order model}
+For the sake of completeness, 
+we first present the full-order model (FOM) based on the NS equations
+for the moving incompressible viscous fluid domain $\Otf$ as
+\begin{align}
+\rho \left( \frac{\partial \bu }{\partial t} \bigg\rvert_{{\bx}} + \left(\bu -\bw\right)\cdot \boldsymbol{\nabla} \bu
+ \right)= 
+ \boldsymbol{\nabla} \cdot \boldsymbol{\sigma} \mbox{ on } \Otf, \label{eq:N-S} \\
+\boldsymbol{\nabla} \cdot\bu = 0 \mbox{ on } \Otf, \label{eq:continuity}
+\end{align}
+where the time derivative is taken 
+with the referential coordinate ${\bx}$ held fixed and 
+the Cauchy stress tensor for a Newtonian fluid is 
+$\boldsymbol{\sigma} = -p\mathbf{I} + \mu \left(\boldsymbol{\nabla} \bu 
++ \left(\boldsymbol{\nabla} \bu \right)^T
+\right) $. Here $p$, $\bu$, $\bw$,  $\mu$ and $ \mathbf{I} $  denote the fluid pressure, 
+the fluid velocity, the mesh velocity, the dynamic viscosity and 
+the identity tensor, respectively. 
+%
+The mesh nodes on the fluid domain $\Omega^f(t)$ are updated by solving a linear steady pseudo-elastic material model
+\begin{align}
+\label{MeshEq}
+\div \cdot \stress^\mathrm{m} = \vec{0},
+\end{align} 
+where $\stress^\mathrm{m}$ is the stress experienced by the ALE mesh due to the strain induced by the 
+rigid-body movement, which is defined as,
+\begin{align}
+\label{meshEq}
+\qquad \stress^\mathrm{m} = (1+k_\mathrm{m})\left[\left(\div \vec{\eta}^\mathrm{f}+\left(\div
+\vec{\eta}^\mathrm{f}\right)^T\right)+\left(\div \cdot \vec{\eta}^\mathrm{f}\right)\vec{\mathrm{I}} \right],
+\end{align}
+where $\vec{\eta}^\mathrm{f}$ represent the ALE mesh node displacement and 
+$k_\mathrm{m}$ is a mesh stiffness variable chosen as a function of the element area to 
+limit the distortion of small elements located in the immediate vicinity of the fluid-body 
+interface \cite{Liu2014}.
+
+Given a base flow $\bu_0$, the corresponding linearized NS equations can be written in a semi-discrete form as 
+\begin{equation}
+\mathsfbi{E}\frac{d \mathsfbi{Q} }{d t} = \mathsfbi{F} \mathsfbi{Q} + \mathsfbi{G} \mathsfbi{V}_m,
+\label{eq:NS_pr}
+\end{equation}
+where the matrices and vectors in Eq.~(\ref{eq:NS_pr}) are
+\begin{subequations}
+\begin{equation}
+ \mathsfbi{F}=\left( \begin{array}{cc}
+  -\left(  \right)\cdot \boldsymbol{\nabla} \bu_0 - \bu_0 \cdot \boldsymbol{\nabla} \left(  \right)+ \mu \left(\boldsymbol{\nabla} \left(  \right)
+   + \boldsymbol{\nabla}^T\left( \right) \right)
+     & -\boldsymbol{\nabla}\left(  \right) \\
+ \boldsymbol{\nabla} \cdot \left(  \right) & \mathsfbi{0}
+\end{array}  \right),
+\label{eq:NS_state_space}
+\end{equation} 
+
+%\begin{align}
+%\rho^\mathrm{f} \left( \frac{\partial \bu^\mathrm{f}}{\partial t} \bigg\rvert_{\widehat{x}} + \left(\bu^\mathrm{f}-\bw\right)\cdot \boldsymbol{\nabla} \bu^
+%\mathrm{f} \right )= \boldsymbol{\nabla} \cdot \boldsymbol{\sigma}^\mathrm{f} + \mathbf{b}^\mathrm{f} \mbox{ on } \Otf \label{eq:N-S} \\
+%\boldsymbol{\nabla} \cdot\bu^\mathrm{f} = 0 \mbox{ on } \Otf \label{eq:continuity}
+%\end{align}
+
+
+%
+\begin{equation}
+\mathsfbi{G} = \left( \begin{array}{cc}
+  \left(  \right)\cdot \boldsymbol{\nabla} \bu_0 & \mathsfbi{0} \\
+ \mathsfbi{0}  & \mathsfbi{0}
+\end{array}  \right),
+\mathsfbi{E} = \left( \begin{array}{cc}
+  \mathsfbi{I} & \mathsfbi{0} \\
+ \mathsfbi{0}  & \mathsfbi{0}
+\end{array}  \right),
+\mathsfbi{Q} = \left( \begin{array}{cc}
+  \bu \\
+  p
+\end{array}  \right),
+\mathsfbi{V}_m = \left( \begin{array}{cc}
+  \bw \\
+ \mathsfbi{0}
+\end{array}  \right).
+\label{eq:NS_EQ}
+\end{equation} 
+\end{subequations}
+
+The linearized NS equation for stationary cylinder is obtained 
+by setting mesh velocity $\bw=\mathsfbi{0}$. 
+After the discretization, the generalized eigenvalue problem of the linearized 
+NS equation can be written as
+$(\mathsfbi{A_f} + \sigma \mathsfbi{B_f}) \mathsfbi{p} =\mathsfbi{0}$, 
+where the non-symmetric matrices $\mathsfbi{A_f}$ and $\mathsfbi{B_f}$ 
+results from the spatial and temporal discretizations, 
+$\sigma$ denotes the eigenvalue of the discretized system,
+$\mathsfbi{p}$ is the right eigenvectors (forward modes). 
+The corresponding discrete adjoint problem can be obtained as
+$\mathsfbi{q} (\mathsfbi{A_f} + \sigma \mathsfbi{B_f})  =\mathsfbi{0}$, 
+where $\mathsfbi{q}$ is the left eigenvector of the discrete system 
+and represents the approximation of the adjoint modes \citep{Luchini2007}. 
+%and its corresponding adjoint solver can be written immediately as
+%\begin{equation}
+%\mathsfbi{E}^*\frac{d \mathsfbi{Q}^* }{d t} = \mathsfbi{L}^* \mathsfbi{Q}^* 
+%\label{eq:NS_ad}
+%\end{equation}
+%where asterisks $^*$ denotes conjugate transpose. 
+%%How to compute base flow
+%%The base flow is computed by fixed point iteration without the time dependent term
+%%in the nonlinear incompressible NS equation. 
+% 
+The linearized NS equations are solved by the semi-discrete 
+variational procedure,  which is employed for the nonlinear 
+fluid-structure equations in \citep{Liu2014,Jaiman2015}.  
+The fluid-structure coupling is achieved 
+through a partitioned staggered procedure \citep{Jaiman2011}. 
+We next present the ERA-based ROM via input-output dynamics of FOM. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Feedback control via reduced-order model}
+%% VIV-ROM 
+The ERA-based ROM is constructed by linear input/output dynamics of the NS equations given in Eq.~(\ref{eq:N-S}) and Eq.~(\ref{eq:continuity}). 
+The input vector  $\mathsfbi{u}=[Y,V_c]^T$ for the fluid system are transverse displacement
+$Y$ and the suction and blowing vertical velocity $V_c$, while the output  
+is the total lift coefficient $C_l$ over the structural body.
+The fluid ERA-based ROM formulated in state-space form at discrete times $t=k\Delta t$, 
+$k=0,1,2,...,$ with a constant sampling time $\Delta t$ reads 
+ %
+\begin{equation}
+\left. \begin{array}{ll}
+\displaystyle \mathsfbi{x_f}(k+1)=\mathsfbi{Ax_f}(k)+\mathsfbi{Bu}(k)  \\[8pt]
+\displaystyle C_l(k)=\mathsfbi{Cx_f}(k)+\mathsfbi{Du}(k)
+\end{array}\right\}
+ \label{eq:fluid}
+\end{equation}  
+where $\mathsfbi{x_f}$ is an $n_r$-dimensional state vector, and the integer $k$ is a sample index for the time stepping.
+%
+The system matrices are $\left(\mathsfbi{A},\mathsfbi{B},\mathsfbi{C},\mathsfbi{D}\right)$, 
+which are obtained by ERA method. To construct the ERA-based ROM, 
+the impulse response of NS equation is first defined as $\mathsfbi{y}$, based on which
+the generalized block Hankel matrix $r \times s$ can be constructed as
+\begin{equation}
+\mathsfbi{H}(k-1) = 
+\left[ {\begin{array}{*{20}c}
+    \mathsfbi{y}_{k+1}&     \mathsfbi{y}_{k+2}& ...& \mathsfbi{y}_{k+s}        \\    
+    \mathsfbi{y}_{k+2}& \mathsfbi{y}_{k+3}& ...& \mathsfbi{y}_{k+s+1}    \\
+    \vdots& \vdots& \ddots& \vdots        \\
+    \mathsfbi{y}_{k+r}& \mathsfbi{y}_{k+r+1}& ...&\mathsfbi{y}_{k+(s+r-1)}
+ \end{array} } \right],
+\label{eq:Hankel}
+\end{equation}  
+and by applying singular value decomposition (SVD) of Hankel matrix $\mathsfbi{H}(0)$ as
+\begin{equation}
+\mathsfbi{H}(0) = \mathsfbi{U}\mathsfbi{\Sigma}\mathsfbi{V}^*=
+\left[\mathsfbi{U}_1 \quad \mathsfbi{U}_2\right]
+\left[{\begin{array}{*{20}c}
+   \mathsfbi{\Sigma}_1 \quad \mathsfbi{0} \\
+   \mathsfbi{0} \quad \mathsfbi{\Sigma}_2
+ \end{array} }
+\right]
+\left[{\begin{array}{*{20}c}
+  \mathsfbi{V}_1^* \\
+  \mathsfbi{V}_2^*
+ \end{array} }
+\right]
+\end{equation}
+where the diagonal matrix $\Sigma$ are the Hankel singular values (HSVs). 
+The block matrix $\Sigma_2$ contains the zeros or 
+negligible elements. By truncating the dynamically less significant states, we estimate 
+$\mathsfbi{H}(0) \approx \mathsfbi{U}_1\mathsfbi{\Sigma}_1\mathsfbi{V}_1^*$. 
+The state space matrices $(\mathsfbi{A}, \mathsfbi{B}, \mathsfbi{C}, \mathsfbi{D})$ are obtained by
+\begin{equation}
+\left. \begin{array}{ll}
+
+\displaystyle \mathsfbi{A}=\Sigma^{-1/2}_{1}\mathsfbi{U}^{*}_{1}\mathsfbi{H}(1)\mathsfbi{V}_{1}\Sigma^{-1/2}_{1} \\
+\displaystyle \mathsfbi{B}=\Sigma^{1/2}_{1}\mathsfbi{V}^{*}_{1}\mathsfbi{E_m}   \\
+\displaystyle \mathsfbi{C}=\mathsfbi{E_t}^{*}\mathsfbi{U}_{1}\Sigma^{1/2}_{1}   \\    
+\displaystyle \mathsfbi{D}=\mathsfbi{y}_{1}
+\end{array}\right\}
+ \label{eq:ERA_ROM_matrices}
+\end{equation}  
+Here, $\mathsfbi{E_m}^*=\left[\mathsfbi{I}_q \quad \mathsfbi{0} \right]_{q\times N}$, 
+$\mathsfbi{E_t}^{*}=\left[\mathsfbi{I}_p \quad \mathsfbi{0} \right]_{p \times M}$, where
+$N =s \times q$, $M =r \times p$, and $\mathsfbi{I}_{p,q}$ are the identity matrices. 
+%$\mathsfbi{x_f}$ is the $n_r$-dimensional state vector. 
+The matrices 
+$\mathsfbi{B}$ and $\mathsfbi{D}$ can be rewritten as $\mathsfbi{B}=[\mathsfbi{B}_Y,\mathsfbi{B}_{V_c}]$ and  
+$\mathsfbi{D}=[D_Y,D_{V_c}]$, where the subscripts denote the input components defined in the  vector $\mathsfbi{u}$. 
+{\color{red} The ERA-based ROM is constructed in the vicinity of a given base flow at $t=0$ ($k=0$), 
+and the impulse signal starts from $t= \Delta t$ ($k=1$).}
+
+The VIV system is simplified to 
+a transversely vibration circular cylinder with one degree-of-freedom (1-DOF), and the nondimensional structural equation in the state-space form is written as \citep{Yao2016_JFS}
+\begin{equation}
+ \dot{\mathsfbi{x_{s}}}=\mathsfbi{A_{s}}\mathsfbi{x_{s}}+\mathsfbi{B_{s}}C_l.
+\label{eq:structure_state}
+\end{equation} 
+The state matrices and vectors are
+\[ 
+	\mathsfbi{A_{s}}=\left[ \begin{array}{cc}
+	0 & 1\\
+	 -(2\pi F_{s})^2 &-4\zeta\pi F_{s}      
+ 	\end{array} \right],
+ 	\mathsfbi{B_{s}}=\left[ \begin{array}{c}
+ 	0 \\
+ 	\frac{2}{\pi m^{*}}
+	\end{array}  \right],
+	\mathsfbi{x_{s}}=\left[ \begin{array}{c}
+ 	Y \\
+ 	\dot{Y}
+	\end{array}  \right], 
+ \] 
+ %
+where $Y$ is the transverse displacement, $C_{l}$ is the lift coefficient, 
+$F_{s}$ is nondimensional reduced structural frequency 
+defined as $F_{s}=f_{N}D/U = 1/U_r$. 
+Based on the ERA-based ROM, the resulting closed-loop system for VIV 
+can be formulated by coupling  of the structure Eq.~(\ref{eq:structure_state}) 
+and the fluid system Eq.~(\ref{eq:fluid}) as  
+\begin{equation}
+\left. \begin{array}{ll}
+\displaystyle \mathsfbi{x_{sf}}(k+1)=\mathsfbi{A_{sf}}\mathsfbi{x_{sf}}(k) 
++ \mathsfbi{B_{sf}} \mathsfbi{u}_c(k) \\[8pt]
+\displaystyle \mathsfbi{y_{sf}}(k+1)=\mathsfbi{C_{sf}}\mathsfbi{x_{sf}}(k) 
++ \mathsfbi{D_{sf}} \mathsfbi{u}_c(k)
+\end{array}\right\}
+ \label{eq:vivrom}
+\end{equation}  
+where
+\[
+\underset{(n_r+2) \times (n_r+2)}{\mathsfbi{A_{sf}}}=\left[ \begin{array}{cc}
+\mathsfbi{A_{sd}}+\mathsfbi{B_{sd}}D_Y\mathsfbi{C_{sd}} & \mathsfbi{B_{sd}}\mathsfbi{C} \\
+\mathsfbi{B}_Y\mathsfbi{C_{sd}} & \mathsfbi{A}
+\end{array}  \right], \quad
+\underset{(n_r+2) \times 2}{\mathsfbi{B_{sf}}}=\left[ \begin{array}{cc}
+\mathsfbi{0} & \mathsfbi{B_{sd}}D_{V_c} \\
+\mathsfbi{0} & \mathsfbi{B}_{V_c}
+\end{array}  \right] \]
+\[
+\underset{3 \times (n_r+2)}{\mathsfbi{C_{sf}}}=\left[ \begin{array}{cc}
+\mathsfbi{I} & \mathsfbi{0} \\
+D_Y\mathsfbi{C_{sd}} & \mathsfbi{C}
+\end{array}  \right], \quad
+\underset{3 \times 2}{\mathsfbi{D_{sf}}}=\left[ \begin{array}{cc}
+\mathsfbi{0} & \mathsfbi{0} \\
+0 & D_{V_c}
+\end{array}  \right].
+\]
+%
+The structural time discrete matrices are defined as 
+$\mathsfbi{A_{sd}}=e^{\mathsfbi{A_{s}}\Delta t}$, 
+$\mathsfbi{B_{sd}}={\mathsfbi{A_{s}}}^{-1}(e^{\mathsfbi{A_{s}}\Delta t}-\boldsymbol{I})\mathsfbi{B_{s}}$ 
+and $\mathsfbi{C_{sd}}=[1,0]$, 
+%
+where the state vector $\mathsfbi{x_{sf}}=[\mathsfbi{x_{s}},\mathsfbi{x_{f}}]^T$ is a $(n_r+2)$-dimensional vector, and the output
+vector is defined as $\mathsfbi{y_{sf}}=[\mathsfbi{x_{s}},C_l]^T$. 
+The present ERA-based ROM allows to provide the access to most controllable 
+and observable modes of the coupled fluid
+and structure system. With regard to control design, the ROM 
+is valid in the neighbourhood of the unstable steady state.
+
+%% LQR control algorithm 
+As shown in figure \ref{fig:controlplant}, the optimal feedback control based 
+on the linear quadratic regulator (LQR) is utilized to 
+calculate the optimal gain matrix $\mathsfbi{K}$ such that the state-feedback law 
+$\mathsfbi{u}_c(k)=-\mathsfbi{Kx_{sf}}(k)$ minimizes the quadratic cost function 
+for the discrete system as
+%%
+\begin{equation}
+J=\sum_{k=1}^{\infty}\left\lbrace \mathsfbi{x^*_{sf}}\mathsfbi{Q}\mathsfbi{x_{sf}} + \\
+\mathsfbi{u}_c^*\mathsfbi{R}\mathsfbi{u}_c \right\rbrace 
+\label{eq:lqr}
+\end{equation}  
+where $\mathsfbi{Q}$ and $\mathsfbi{R}$ set the relative weights of state deviation and input usage, respectively, 
+and the asterisk $^*$ denotes the transpose of matrix. 
+%
+The $\mathsfbi{Q}$ is chosen as identity matrix 
+$\mathsfbi{I}$ for simplicity, whereas $\mathsfbi{R}=c\mathsfbi{I} > 0$  provides input to the cost function $J$.
+%
+The coefficient $c>0$  gives a relative weighing of output and input norms and can be tuned 
+for an optimal tradeoff between the efficiency of VIV regulation and the energy input effort.
+%and to avoid any overshot or aggressive control input. 
+The control input is defined as the blowing and suction 
+through vertical velocity magnitude $\mathsfbi{u}_c=(0, V_c)$ over 
+the surface of two-dimensional cylinder. 
+%This will provide a single scalar value of the control input $V_c$ thus the optimal gain matrix $\mathsfbi{K}$ recovers to a single row vector of diagonal entries. 
+For the LQR algorithm, the full state vector $\mathsfbi{x_{sf}}(k)$ should be observable to calculate the control input $\mathsfbi{u}_c$, while it is not always possible in practice. 
+By assuming the measurements of force, velocity or acceleration on the body mounted sensors, 
+we can estimate  the full state vector via the Kalman filter as 
+%%
+\begin{equation}
+\mathsfbi{\hat{x}_{sf}}(k+1)=\mathsfbi{A_{sf}}\mathsfbi{\hat{x}_{sf}}(k) + \mathsfbi{B_{sf}} \mathsfbi{u}_c(k) \\
++\mathsfbi{L}[\mathsfbi{y_{sf}}(k)-\mathsfbi{C_{sf}}\mathsfbi{\hat{x}_{sf}}(k)-\mathsfbi{D_{sf}} \mathsfbi{u}_c(k)]
+\label{eq:Kalman}
+\end{equation}  
+where $\mathsfbi{\hat{x}_{sf}}$ is the minimum mean-square estimator of the state vector  and $\mathsfbi{L}$ is 
+the filter gain matrix. After that the control input vector $\mathsfbi{u}_c$ can be determined 
+as $\mathsfbi{u}_c(k)=-\mathsfbi{K}\mathsfbi{\hat{x}_{sf}}(k)$, resulting a closed-loop VIV system as given in 
+Eq.~(\ref{eq:vivrom}).
+Although the formulation presented here is general for any vibrating 
+structure, results are presented for a canonical bluff body of circular cylinder.
+%
+We next demonstrate the designed controller for the unstable 
+flow past a stationary circular cylinder and the feedback control of freely vibrating cylinder.
+%%
+\begin{figure}
+\centering
+ \includegraphics[scale=0.6]{fig2}
+	\caption{Feedback control of VIV using reduced-order model:
+	         schematic of closed-loop control $G_{CL}$ with ERA-based ROM, 
+             where $\delta$ and $\mathsfbi{K}$ represent  
+             impulse input and gain matrix, respectively,
+              Kalman denotes the filter defined in Eq.~(\ref{eq:Kalman}). }
+	\label{fig:controlplant}
+\end{figure}
+
+
+%% stability, receptivity and wavemaker 
+\begin{figure}
+\centering
+\begin{minipage}{.4\textwidth}
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig3a}
+	\caption{}
+	\label{fig:re60_stability}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig3b} 
+	\caption{}
+	\label{fig:re60_receptivity}
+	\end{subfigure}	\\			
+\end{minipage}%
+\begin{minipage}{.4\textwidth}
+  \begin{subfigure}[c]{0.45\textwidth}
+\centering
+  \includegraphics[scale=0.4]{fig3c} 
+    \caption{}
+    \label{fig:wavemaker}
+    \end{subfigure}  
+\end{minipage} 
+
+\caption{Spatial distribution of flow field: 
+(a) forward, (b) adjoint velocity amplitudes, and 
+(c) wavemker region for circular cylinder at $Re=60$. 
+         In (c), actuation slots as triangles and body-mounted force sensor 
+         as red line over the cylinder are shown for $BS0$ configuration.
+         In (a) and (b), Contour levels are from $0.002$ to $0.018$ in increment of $0.002$.
+         In (c), contour levels are from $0.02$ to $0.2$ in increment of $0.01$.
+         }
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}\label{sec:results}
+\subsection{Active feedback control of unsteady wake flow}\label{sec:stationary}
+We first demonstrate the feedback control scheme for the  flow past a stationary circular cylinder at $Re=60$ with $BS0$. The system
+input is the blowing and suction vertical velocity $V_c$, and the output is the fluctuating lift coefficient $C_l$. The corresponding 
+fluid ROM can be obtained by setting $\mathsfbi{B_Y}=\mathsfbi{0}$ and $D_Y=0$ 
+in Eq.~(\ref{eq:fluid}). 
+%% ROM contruction procedure 
+%
+To start with the ERA-based ROM construction, the unstable steady state (i.e. the base flow) is first computed by a fixed point iteration without the time dependent term in Eq. (\ref{eq:N-S}). 
+For that purpose, 800 impulse response outputs ($C_l$) are stacked 
+at each time step $\Delta t=0.05$ by imposing an impulse of $\delta(t)=10^{-4}$ 
+to the blowing and suction vertical velocity $V_c$. 
+Subsequently, the ERA-based ROM is obtained by performing a
+singular value decomposition of a $500 \times 200$ Hankel matrix. 
+The order of ERA-based ROM is determined by examining the singular values 
+of the Hankel matrix.
+The linearity of the impulse response outputs ($C_l$) is confirmed 
+by comparing the impulse response of two different 
+values $\delta(t)=10^{-4}$ and $10^{-3}$. To visualize the most excited flow structures, 
+the leading POD mode shown in figure \ref{fig:modes}, is extracted via proper orthogonal decomposition (POD) method. For this purpose, the snapshots of flow field is stacked at
+each time step during the impulse response modeling.
+%
+The aforementioned ERA-based ROM construction procedure can be considered as 
+open-loop identification process.
+% wavemaker  
+%
+Based on the wavemaker region \citep{Luchini2007}, we determine the locations 
+with high sensitivity and strong response, which are computed by taking the pointwise 
+product of the forward and adjoint global modes as shown in figure \ref{fig:re60_stability} and \ref{fig:re60_receptivity}. 
+The modes are obtained directly by solving 
+a generalized eigenvalue problem of the linearized NS Eq. (\ref{eq:NS_pr}) in the neighbourhood of the base flow. 
+%
+%
+As shown in figure \ref{fig:wavemaker}, 
+the body mounted force sensor and the suction and blowing actuators 
+are within the wavemaker region, which allows the feedback control 
+to produce the largest drift of unstable observable and controllable modes.
+
+%% mode 
+\begin{figure}
+\centering
+\begin{subfigure}[c]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig4a}
+	\caption{}
+	\label{fig:mode1ux}
+	\end{subfigure}	
+\begin{subfigure}[c]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig4b}
+	\caption{}
+	\label{fig:mode1uy}
+	\end{subfigure}		
+        \caption{Leading POD mode at $Re=60$:  
+        (a) streamwise velocity, and (b) the cross-stream velocity. 
+        Contour levels are from $-0.01$ to $0.01$ in increments of $0.0025$.}
+        \label{fig:modes}
+\end{figure}
+%
+
+%% ROM validation and impulse response suppression 
+\begin{figure}
+\centering
+\begin{subfigure}[b]{\columnwidth}
+\centering
+ \includegraphics[scale=0.5]{fig5a}
+    \caption{}
+    \label{fig:val_cl}
+    \end{subfigure} \\
+\begin{subfigure}[b]{\columnwidth} 
+\centering
+  \includegraphics[scale=0.5]{fig5b}
+	\caption{}
+	\label{fig:val_uc}
+	\end{subfigure}	
+        \caption{Impulse response of stationary cylinder with $BS0$ configuration: temporal variation of
+        (a) lift coefficient $C_l$, 
+        (b) control input $V_c$ predicted by ROM and 
+        compared with the FOM at $Re=60$ and $c=10^2$.
+         The controller is switched on after $tU/D=50$ convective time units.  }
+        \label{fig:linear_val}
+\end{figure}
+
+%Figure \ref{fig:linear_val} confirms that the ROM with $N_{modes}=33$ overlaps the FOM almost 
+%perfectly. 
+% wavemaker  
+%Based on the wavemaker region \citep{Luchini2007}, we determine the locations 
+%with high sensitivity and strong response, which are computed by taking the pointwise 
+%product of the forward and adjoint global modes. 
+%%
+%%
+%As shown in figure \ref{fig:wavemaker}, 
+%the body mounted force sensor and the suction and blowing actuators 
+%are within the wavemaker region, which allows the feedback control 
+%to produce the largest drift of unstable observable and controllable modes.             
+%%
+Once the ERA-based ROM is constructed, the LQR method is employed to design the optimal feedback gain $\mathsfbi{K}$ 
+for the different values of weighting parameters $c=10^2, 10^3, 10^4$. 
+As shown in figure \ref{fig:controlplant}, the closed-loop model 
+can be directly constructed through the ERA-based ROM. 
+The effectiveness of closed-loop ROM with $c=10^2$ is examined  
+by comparing temporal variations of $C_l$ and $V_c$ against the FOM counterpart, 
+as illustrated in figure \ref{fig:linear_val}. 
+An excellent match is found between the ROM with number of modes $n_r = 33$ and 
+the FOM, thereby confirming the accuracy and convergence of 
+the present ERA-based ROM. The impulse response of the open-loop system is rapidly attenuated 
+once the controller is switched on at $t \geqslant 50$. 
+
+The eigenvalues are calculated by $\lambda=$log(eig($\mathsfbi{A_{sf}-B_{sf}K}))/\Delta t$, where $\Delta t=0.05$ is used for all the computations. Figure \ref{fig:sta_eig} shows 
+the  comparison of eigenvalue distribution between the open-loop (OL) and closed-loop (CL)
+systems. As expected, a pair of eigenvalue of open-loop system is at the unstable
+right half-plane as $Re=60 > Re_{cr}$ (where the critical Reynolds number is
+$Re_{cr} \approx 46.8$). 
+On the other hand, the eigenvalues of closed-loop system are all in the stable 
+left half-plane, which further confirms that the closed-loop system is stable 
+via the process of placing the poles in the stably-damped locations in the complex plane. 
+%%%
+As $c$ decreases, figure \ref{fig:sta_eig} also indicates that 
+the eigenvalue moves further leftward and the closed-loop system becomes more stable. 
+ However, a smaller value of $c$ introduces a larger control input $V_c$ thus   
+ there is a tradeoff between the aggressive control input and the 
+ rapid suppression of wake instability. 
+
+%% lco suppression for stationary
+\begin{figure}
+\centering
+\begin{minipage}{.4\textwidth}
+  \begin{subfigure}[c]{0.45\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig6a} 
+    \caption{}
+    \label{fig:sta_eig}
+    \end{subfigure}  \\
+\end{minipage} 
+\begin{minipage}{.4\textwidth}
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig6b}
+	\caption{}
+	\label{fig:lco_cl}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig6c} 
+	\caption{}
+	\label{fig:lco_cd}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig6d}
+	\caption{}
+	\label{fig:lco_uc}
+	\end{subfigure}				
+\end{minipage}%
+\caption{Feedback control of stationary cylinder at $Re=60$ with $BS0$: 
+      (a) eigenspectrum for open and closed-loop with different values of $c$, 
+         time variation of (b) $C_l$, (c) $C_d$ (base flow drag subtraction),
+         and (d) control input $V_c$ corresponding to closed-loop response of  
+         full nonlinear system.  While the system has an impulse at $t=0$, 
+         the controller is switched on after $tU/D=175.5$.
+         }
+\end{figure}
+%% 
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig7a}
+	\caption{}
+	\label{fig:iso_vor1}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig7b}
+	\caption{}
+	\label{fig:iso_vor2}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig7c}
+	\caption{}
+	\label{fig:iso_vor3}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig7d}
+	\caption{}
+	\label{fig:iso_vor4}
+	\end{subfigure}	
+        \caption{Stabilization effect on the vortex shedding of stationary circular cylinder at $Re=60$ with $BS0$ and $c=10^2$. 
+        Snapshots of spanwise vorticity contours at: 
+        $tU/D=$ (a) 175, (b) 225, (c) 250, (d) 325. 
+        Contour levels are from $-1$ to $1$ in increments of $0.1$.}
+        \label{fig:iso_vor}
+\end{figure}
+
+
+%%%saturated state 
+%The designed controller is used to stabilize the saturated state. 
+To demonstrate the AFBS controller to stabilize the saturated vortex street, 
+figures \ref{fig:lco_cl} and \ref{fig:lco_cd} show the effective attenuation of 
+the fluctuating lift $C_l$ and the drag $C_d$ 
+with the control turned on at $tU/D=175.5$. 
+It is expected that $c=10^4$ requires the smallest control input $V_c$ and 
+the longest time scale to reach the target state,
+followed by $c=10^3$ and $c=10^2$. 
+The corresponding values of $C_\mu$ are $0.086$, $0.22$ and $0.52$ 
+for $c=10^4, 10^3, 10^2$, respectively. The flow field evolution during suppression 
+process is illustrated in figure \ref{fig:iso_vor}. 
+%In the next section, the effect of 
+%blowing and suction configuration is studied. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sensitivity study for unsteady wake flow control}\label{sec:sensitivity}
+%
+Before proceeding to the application of proposed ERA-based active jet control 
+for VIV system,
+we present a parametric study of a set of representative
+actuator configurations based on suction/blowing pairs,
+the effect of angular arrangement of actuators, and 
+the combined versus independent control system architectures.
+%
+\subsubsection{Effect of actuator configurations}\label{sec:configuration}
+To compare the effectiveness of the reference case $BS0$, we consider three 
+additional configurations as depicted in figure \ref{fig:suctionbs123} to analyze the active feedback control based on ERA-based ROM.
+%
+The configuration $BS1$ has only midward actuation slots, whereby the configuration $BS2$ has the 
+slots in the leeward side. By removing windward slots from $BS0$ 
+at $\theta=(135 \degree, 225 \degree$),  the new configuration of $BS3$ is recovered.
+%
+Figure \ref{fig:dfbs_eig} shows the comparison of the eigenvalues 
+of closed-loop  between $BS0$ and other three actuation configurations with $c=10^2$. 
+While $BS0$, $BS1$ and $BS3$ provide similar 
+damped eigenvalues, the configuration $BS2$ is the least effective actuator, which is further confirmed 
+by the closed-loop response of full nonlinear system in 
+figures \ref{fig:dfbs_lco_cl} and \ref{fig:dfbs_lco_cd}.
+%
+The figures also show that the fastest suppression of vortex street  
+is achieved by $BS0$, while the $BS2$ actuator takes the longest time to eliminate vortex shedding. 
+On the other hand, the actuation configurations of $BS1$ and $BS3$ 
+behave similarly with respect to the suppression of the vortex street. 
+The baseline $BS0$ with $\theta=45 \degree$ is considered 
+to be the most effective actuator configuration. 
+%
+By comparing $BS1$ and $BS2$ configurations, the midward $BS1$ actuation slots 
+have an improved control performance than the leeward $BS2$ configuration. 
+This implies that the active suction/blowing control in the boundary layer (before 
+the separation) is relatively efficient.
+%
+Based on the above study, the configuration $BS0$ is found to be more 
+effective in reducing mean drag and suppressing fluctuating forces.
+Next we investigate the effect of suction/blowing angle $\theta$ 
+in the baseline $BS0$ configuration.
+%while keeping the midward 
+%slots $\theta=(135 \degree, 225 \degree$) fixed.
+
+%Therefore, the configuration $BS0$ is employed for the VIV control in the next section. 
+%While the $BS2$ actuator takes 
+%the longest time to suppress $C_l$ and $C_d$, the fastest suppression of vortex street  
+%is achieved by $BS0$. 
+%
+%% primary and adjoint mode; wavemaker region. 
+%\begin{figure}
+%\centering
+%\begin{minipage}{.4\textwidth}
+%  \begin{subfigure}[c]{0.4\textwidth}
+%\centering
+%  \includegraphics[scale=0.4]{primary_mode} 
+%    \caption{}
+%    \label{fig:primary_mode}
+%    \end{subfigure}  \\
+%\begin{subfigure}[c]{0.4\textwidth} 
+%\centering
+%  \includegraphics[scale=0.4]{adjoint_mode}
+%	\caption{}
+%	\label{fig:adjoint_mode}
+%	\end{subfigure}	
+%\end{minipage} 
+%\begin{minipage}{.4\textwidth}
+%\begin{subfigure}[b]{0.4\textwidth} 
+%\centering
+%  \includegraphics[scale=0.4]{wavemaker}
+%	\caption{}
+%	\label{fig:wavemaker}
+%	\end{subfigure}		
+%\end{minipage}%
+%\caption{(a) Primary, (b) adjoint mode and (c) Wavemaker region for circular cylinder at $Re=60$. 
+%The $BS0$ actuation slots are shown as triangles and body-mounted force sensor is shown as a red line in (c). 
+%Contour levels are from $-0.2$ to $0.20$ in increment of $0.025$ for (a), 
+%from $-1$ to $1$ in increment of $0.1$ for (b),
+%from $0.02$ to $0.2$ in increment of $0.12$ for (c).}
+%\end{figure}
+%% different blowing and suction configuration
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.6]{fig8} 
+	\caption{ Additional three ($BS1,BS2,BS3$) configurations 
+           of actuators as blowing and suction slots over 
+           the surface of circular cylinder. 
+           The positive control input is defined as 
+           suction from bottom and blowing at the top of the cylinder. 
+           While $BS1$ configuration forms a  symmetric configuration of 
+           suction-blowing pairs,  
+           $BS2$ and $BS3$ are asymmetric with respect to the quadrants of cylinder.}
+	\label{fig:suctionbs123}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{minipage}{.4\textwidth}
+  \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig9a} 
+    \caption{}
+    \label{fig:dfbs_eig}
+    \end{subfigure}  \\
+\end{minipage} 
+\begin{minipage}{.4\textwidth}
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig9b}
+	\caption{}
+	\label{fig:dfbs_lco_cl}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig9c} 
+	\caption{}
+	\label{fig:dfbs_lco_cd}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig9d}
+	\caption{}
+	\label{fig:dfbs_lco_uc}
+	\end{subfigure}				
+\end{minipage}%
+\caption{Effect of the placement of fluidic actuators based suction-blowing pairs 
+on the cylinder surface: (a) distribution of eigenspectrum of closed-loop system for different actuation slots placements ($BS0-BS3$),
+		temporal variations of fluctuating (b) $C_l$, (c) $C_d$, 
+                and (d) control input $V_c$ 
+		for the closed-loop response of full nonlinear 
+                system at $(Re,c)=(60,10^2)$. 
+		%The system is subject to an impulse at $t=0$ with 
+                %the controller switched on after $t=175.5$.
+                }
+\end{figure}
+ 
+%%%%%%%%%%%%%%%%%
+\subsubsection{Effect of angle for suction-blowing pairs}\label{sec:angle}
+In this section, the sensitivity of actuation angle for $BS0$ is investigated 
+by varying it from the baseline $\theta=45 \degree$ to $\theta=(30 \degree, 60 \degree)$. 
+%
+We keep the midward pair of suction/blowing actuation at 
+$\theta=(90 \degree, 270 \degree)$, but we only 
+change other two diametrically pairs of suction and blowing actuations.
+%
+The distribution of eigenspectrum, as shown in figure \ref{fig:angle_eigvalue}, suggests 
+that $BS0$ configuration with $\theta=(30 \degree,45 \degree,60 \degree)$
+provides a similar effectiveness with regard to the least damped eigenvalues. 
+Next, the configuration $BS0$ with different angle $\theta$ is applied 
+to stabilize the vortex 
+shedding at nonlinear saturated state. 
+The results in figures \ref{fig:angle_cl}, \ref{fig:angle_cd} and \ref{fig:angle_uc} 
+show similar suppression trends for the lift $C_l$ and the drag $C_d$ signals and 
+the control input $V_c$ obtained for the three angles. 
+Figures \ref{fig:angle_cl} and \ref{fig:angle_cd} also show that $BS0$ with $\theta=60 \degree$ 
+has slightly larger overshot when the controller is switched on 
+followed by $\theta=30 \degree$ and $\theta=45 \degree$. 
+%
+In all our previous studies, 
+the combined controller is designed as the macro-manipulator for controlling 
+the global dynamics. In other words, the actuators are not allowed to vary their 
+control input speed $V_c$ independently, therefore the same control input $V_c$ 
+in all suction-blowing pairs is generated. 
+%
+It is interesting to study the effect of control system architecture, whereby 
+there is no coupling between the suction/blowing subsystems and the actuators 
+can generate independent control input.
+%
+\begin{figure}
+\centering
+\begin{minipage}{.4\textwidth}
+  \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig10a} 
+    \caption{}
+    \label{fig:angle_eigvalue}
+    \end{subfigure}  \\
+\end{minipage} 
+\begin{minipage}{.4\textwidth}
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig10b}
+	\caption{}
+	\label{fig:angle_cl}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig10c} 
+	\caption{}
+	\label{fig:angle_cd}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig10d}
+	\caption{}
+	\label{fig:angle_uc}
+	\end{subfigure}				
+\end{minipage}%
+\caption{Effect of angle of fluidic actuators on the cylinder surface: 
+         (a) distribution of eigenspectrum of closed-loop system for different actuation slots placements, 
+		 time variations of fluctuating (b) $C_l$, (c) $C_d$, and (d) control input $V_c$ 
+		for the closed-loop response of full nonlinear system at $$(Re,c)=(60,10^2)$$. 
+		%The system is subject to an impulse at $t=0$ with 
+                %the controller switched on after $t=175.5$.
+                }
+\end{figure} 
+
+%% different velocity 
+\begin{figure}
+\centering
+  \includegraphics[scale=0.8]{fig11}
+    \caption{Schematics of combined and independent (decoupled) suction/blowing 
+    control system 
+    architectures. In contrast to the 
+    combined controller $BS0$ (left), $BS0D$ (right) 
+    partitions the controller pairs into different pieces
+    with different blowing and suction velocity denoted 
+    by $V_{c1}$, $V_{c2}$, and $V_{c3}$, respectively.}
+    \label{fig:absf5}
+\end{figure}
+%% 
+\begin{figure}
+\centering
+\begin{minipage}{.4\textwidth}
+  \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig12a} 
+    \caption{}
+    \label{fig:absf5_eig}
+    \end{subfigure}  \\
+\end{minipage} 
+\begin{minipage}{.4\textwidth}
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig12b}
+	\caption{}
+	\label{fig:absf5_cl}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig12c} 
+	\caption{}
+	\label{fig:absf5_cd} 
+	\end{subfigure}	    \\
+\begin{subfigure}[b]{0.4\textwidth} 
+\centering
+  \includegraphics[scale=0.4]{fig12d} 
+	\caption{}
+	\label{fig:absf5_Vc}
+	\end{subfigure}				
+\end{minipage}%
+\caption{Comparison between combined versus decoupled control system architectures: 
+         (a) distribution of eigenspectrum. $c=10^2$ for $BS0$, and $c=(10,10^2,10^3)$ for $BS0D$,
+         time variations of fluctuating (b) $C_l$, (c) $C_d$, and (d) control input $V_c$ 
+		 for the closed-loop response of full nonlinear system at $c=10^2$ and $Re=60$.   
+		 In (c),  the vector ($V_{c1},V_{c2},V_{c3}$) is the control input of the $BS0D$ configuration. 
+          }
+\end{figure}
+
+\subsubsection{Combined versus independent controller}\label{sec:independent_control}
+To understand the effect of control architecture, 
+we decouple the pairs of suction/blowing actuators and compare the performance 
+against the combined controller counterpart.
+The decoupled controller configuration with different blowing and suction velocity, 
+termed as $BS0D$, is shown in figure \ref{fig:absf5}. 
+As compared with the combined controller configuration 
+$BS0$ with single DOF control input velocity $V_c$, 
+the controller of $BS0D$ has three independent control inputs $V_{c1}$, $V_{c2}$ and $V_{c3}$. 
+As demonstrated in figure \ref{fig:absf5_eig}, the combined configuration $BS0$ 
+is more effective to damp the unstable eigenvalues as compared to the decoupled $BS0D$ 
+counterpart. Moreover the configuration $BS0D$ is found to be lesser sensitive for the 
+least damped eigenvalues for the identical range of $c$ values. 
+%
+To further assess the performance of $BS0$ and $BS0D$ controllers, 
+figures \ref{fig:absf5_cl} and \ref{fig:absf5_cd}
+illustrate the nonlinear saturated state suppression through the force time histories. 
+After removing the same matching control input constraint in the LQR algorithm 
+for $BS0D$ controller, the force trends suggest that the controller becomes less
+effective when using different blowing and suction velocity at the same value of $c$.
+It is further confirmed in figure \ref{fig:absf5_Vc}, which shows 
+that the control velocity inputs
+($V_{c1}$, $V_{c2}$, $V_{c3}$) become smaller at the same $c=10^2$, 
+resulting into larger time for the suppression of vortex street. 
+
+As shown in the previous section, the baseline $BS0$ configuration with $\theta=45 \degree$ is 
+the most effective suction/blowing controller configuration. 
+Therefore, we will employ this configuration for the active feedback control of VIV.
+%
+As reported in \cite{owen2001}, passive control 
+techniques that work well for suppressing loads for fixed cylinders may 
+not be effective for elastically mounted configurations.
+%
+We next demonstrate our proposed active feedback control scheme for elastically 
+mounted circular cylinders, which are free to vibrate 
+in transverse only (1-DOF) and in coupled streamwise/transverse directions (2-DOF).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\centering
+\begin{subfigure}[b]{\columnwidth}
+\centering
+  \includegraphics[scale=0.5]{fig13a}
+    \caption{}
+    \label{fig:viv_val_cl} 
+    \end{subfigure}  \\
+\begin{subfigure}[b]{\columnwidth}
+\centering
+  \includegraphics[scale=0.5]{fig13b}
+    \caption{}
+    \label{fig:viv_val_y} 
+    \end{subfigure}   \\
+\begin{subfigure}[b]{\columnwidth} 
+\centering
+  \includegraphics[scale=0.5]{fig13c}
+	\caption{}
+	\label{fig:viv_val_uc}
+	\end{subfigure}	
+        \caption{Impulse response of closed-loop VIV system based on AFBS control: temporal evolution of 
+        (a) lift coefficient $C_l$, 
+        (b) transverse displacement $Y$, and 
+        (c) control input $V_c$ predicted by ROM and compared with the FOM 
+        for $(Re,m^*)=(60,10)$, $F_s=0.176$, and $c=10^2$ with controller switched on at $tU/D=0$.}
+        \label{fig:viv_val}
+\end{figure}
+
+\subsection{Feedback control of vortex-induced vibration}\label{sec:VIV}
+%%
+%% VIV mechanism 
+In \cite{YaoJFM2016}, we discussed that the onset of VIV lock-in is related to 
+the instability exchange between the structural mode (SM) and the fluid mode (WM),
+where the SM and WM represent two distinct eigenvalue branches of ERA-based VIV ROM system.
+The critical reduced natural frequency $F_s$ or onset reduced velocity $U_r=1/F_s$ can be pinpointed 
+by the SM instability branch. The objective of the present active feedback control 
+is to drive all unstable eigenvalues  of the VIV system to the stable left
+half complex plane. 
+%
+While the open loop VIV system (without feedback control) can be obtained 
+by simply setting $\mathsfbi{u}_c=0$ in Eq.~(\ref{eq:vivrom}), 
+the optimal gain is computed for the VIV system 
+at $(Re,m^*)=(60,10)$ using the similar procedure as discussed for the stationary case. 
+%$F_s=0.176$ is used 
+%for structural equation in Eq.~(\ref{eq:structure}), which is in the vicinity 
+%of VIV onset $F_s=0.179$ as shown in figure \ref{fig:eig_viv}.
+
+
+As shown in figure \ref{fig:viv_val}, the closed-loop VIV system 
+response subject to an impulse is completely stabilized and the ROM results nearly 
+overlap with the FOM counterpart. The linear stability is then determined 
+by the eigenvalue analysis for both open- and closed-loop systems,
+as illustrated in figure \ref{fig:eig_viv}. Both the WM and a part of SM 
+$(0.147 < F_{s} \le 0.179)$ are unstable ($Re(\lambda) > 0)$ for the open-loop system, 
+while the eigenvalue of the closed-loop system are all in the stable left half-plane 
+for $0.005 \leq F_s \leq 0.5$ ($2 \leq U_r \leq 200$) with $c=10^2, 10^3$. 
+The results show that the unstable eigenvalues 
+are driven to the lower stable left half-plane as the coefficient $c$ 
+decreases, as indicated by the dash-dot arrow in figure \ref{fig:eig_viv}. It is 
+important to note that the closed-loop VIV system with $c=10^4$ 
+only delays the VIV onset and remains unstable for $F_s \leq 0.117$ ($U_r \geq 8.55$), 
+which indicates that the amplitude may grow continually as $F_s$ decreases. 
+%Therefore, the $c \in [10^2,10^3]$ should be satisfied to ensure VIV free system. 
+%Therefore, the closed-loop
+%VIV system might induce even more dangerous galloping if the controller is not properly designed. 
+%% mass ratio 
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.495\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig14a}
+    \caption{}
+    \label{fig:eig_viv}
+    \end{subfigure} 
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig14b}
+	\caption{}
+	\label{fig:eig_viv_dm}
+	\end{subfigure}	
+        \caption{Root loci of open and closed-loop VIV systems ($0.005 \leq F_s \leq 0.5$): 
+        (a) sensitivity of $c$ parameter on eigenspectrum at $(Re,m^*)=(60,10)$, 
+        (b) effect of mass ratio $m^*$ on the control performance at $(Re,c)=(60,10^3)$. 
+        The unstable right half-plane is shaded in gray. The parameter 
+        $c \in [10^2,10^3]$ ensures the VIV free system for 
+        the whole range of reduced frequency. 
+        }
+        \label{fig:viv_linear}
+\end{figure}
+
+%% viv suppression 
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig15a}
+	\caption{}
+	\label{fig:viv_lco_viv}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig15b}
+    \caption{}
+    \label{fig:viv_lco_y}
+    \end{subfigure} 
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig15c}
+	\caption{}
+	\label{fig:viv_vor1}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig15d}
+	\caption{}
+	\label{fig:viv_vor2}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig15e}
+	\caption{}
+	\label{fig:viv_vor3}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.495\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig15f}
+	\caption{}
+	\label{fig:viv_vor4}
+	\end{subfigure}	
+        \caption{Suppression of VIV response of circular cylinder using AFBS procedure: 
+        time variation of 
+        (a) $C_l$ for saturated (thin-dash) and suppressed (thick-solid) states, 
+        (b) transverse displacement $Y$ and actuator input $V_c$ 
+        with controller switched on at $tU/D=150$, $c=10^3$ and $F_s=0.176$,
+        snapshots of spanwise vorticity contours at: 
+        $tU/D=$ (c) 155, (d) 400, (e) 600, (f) 800. 
+        Contour levels are from $-1$ to $1$ in increments of $0.1$.}
+        \label{fig:viv_cl_y_uc}
+\end{figure}
+
+In figure \ref{fig:eig_viv_dm}, 
+the root loci of different mass ratios are plotted indicating the 
+unstable eigenvalues of lower mass ratio damped more effectively with $c=10^3$. 
+%
+The controller with $c=10^3$ is also able to suppress the saturated VIV response 
+as shown in figure \ref{fig:viv_cl_y_uc}. The lift coefficient $C_l$ and the transverse 
+displacement $Y$ are suppressed once the controller is switched on after $tU/D=150$, when
+the VIV response reaches saturated state. 
+As compared to the saturated vortex shedding state
+of stationary  cylinder, which requires the maximum $V_c \approx 0.65$, the VIV case requires approximately $4.5$ times larger 
+maximum control input $V_c \approx 2.91$ with $C_\mu \approx 4.40$. 
+%For $c=10^3$, the maximum $V_c$ for stationary and VIV saturated state suppression is approximately $0.65$ and $2.91$, respectively.
+%
+Figures \ref{fig:viv_vor1} and \ref{fig:viv_vor2} show snapshots of the spanwise vorticity contours to illustrate the attenuation of vortex shedding when the controller is 
+switched on $t\geqslant 150$. 
+%
+We can infer from the success of the proposed linear AFBS for VIV that there exists 
+a key linear mechanism during the self-sustained 
+VIV oscillation that can be controlled effectively at low Reynolds number.
+Nonlinear effects of the fluid flow, which 
+attempt to saturate vortex shedding and to form a limit cycle in VIV, 
+become dominant in the later stage.
+It is worth pointing that identifying and controlling the linear mechanism
+in nonlinear VIV is not equivalent to predict nonlinear VIV with a
+linear model. 
+
+ 
+%% viv suppression 
+\begin{figure}
+\centering
+  \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig16a} 
+    \caption{}
+    \label{fig:viv2dof_saturated}
+    \end{subfigure}  
+    \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig16b} 
+    \caption{}
+    \label{fig:viv2dof_f}
+    \end{subfigure}    \\
+\begin{subfigure}[b]{\columnwidth} 
+\centering
+  \includegraphics[scale=0.6]{fig16c}
+	\caption{}
+	\label{fig:viv2dof_xy}
+	\end{subfigure}	\\
+\begin{subfigure}[b]{\columnwidth} 
+\centering
+  \includegraphics[scale=0.6]{fig16d} 
+	\caption{}
+	\label{fig:viv2dof_Vc}
+	\end{subfigure}				
+\caption{ Open loop saturated state of 2-DOF VIV system at $(Re,m^*)=(60,10)$: (a) figure-8 trajectory of $X$ and $Y$ displacements,
+         (b) normalized power spectrum $P$ versus frequency $f^*$ of lift coefficient $C_l$ and transverse displacement $Y$, 
+         where $f^*=f/F_s$. 
+         Suppression of 2-DOF VIV response: (c) transverse $Y$ and inline $X$ response trends,
+         (d) lift coefficient $C_l$ and actuator input $V_c$. 
+          The controller is switched on after $tU/D=150$ with $c=10^3$ and $F_s=0.176$.  }
+\end{figure}
+
+%% viv contour 
+\begin{figure}
+\centering
+  \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig17a} 
+    \caption{}
+    \label{fig:viv2dof_175}
+    \end{subfigure}  
+    \begin{subfigure}[c]{0.47\textwidth}
+\centering
+  \includegraphics[scale=0.45]{fig17b} 
+    \caption{}
+    \label{fig:viv2dof_200}
+    \end{subfigure}    
+\begin{subfigure}[b]{0.47\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig17c}
+	\caption{}
+	\label{fig:viv2dof_300}
+	\end{subfigure}	
+\begin{subfigure}[b]{0.47\textwidth} 
+\centering
+  \includegraphics[scale=0.45]{fig17d} 
+	\caption{}
+	\label{fig:viv2dof_400}
+	\end{subfigure}				
+\caption{Adaptive feedback control of 2-DOF VIV of circular cylinder at $(Re, m^*)=(60,10)$. Snapshots of spanwise vorticity contours at: 
+        $tU/D=$ (a) 175, (b) 200, (c) 400, (d) 500. 
+        Contour levels are from $-1$ to $1$ in increments of $0.1$.}
+\label{fig:viv2dof_vor} 
+\end{figure}
+
+%% table for summary 
+\begin{table}
+  \begin{center}
+  \begin{tabular}{c c c c }
+       control input   & stationary & 1-DOF &  2-DOF \\
+       $(V_{c})_{max}$   & 0.65 & 2.91 & 3.00 \\
+       $(C_{\mu})_{max}$   & 0.22 & 4.40 & 4.70 \\
+      $(V_{c})_{rms}$   & 0.10 & 0.77 & 0.79 
+
+  \end{tabular}
+  \caption{ Comparison of control inputs among stationary cylinder, 1-DOF VIV system and 2-DOF VIV
+  with $BS0$ at $c=10^3$. The root mean square ($rms$) and maximum ($max$) are computed for $t \in [t_0,t_0+200]$, and $t_0$ is when 
+  the controller is switched on after $t_0=175.5$ and $150$ for stationary and VIV systems, respectively.}
+  \label{tab:summary}
+  \end{center}
+\end{table}
+ 
+% 2 DOF 
+To demonstrate whether the designed controller for the 1-DOF VIV system can be utilized for 
+2-DOF VIV system feedback control, we introduce free vibration in the streamwise ($X$) direction along with the transverse ($Y$) direction.
+%with the same structural parameter setting ($F_s, \zeta, m^*$) as the transverse 1-DOF described in Eq. (\ref{eq:structure_state}). 
+A typical figure-8 VIV saturated trajectory is shown in figure \ref{fig:viv2dof_saturated} at $F_s=0.176$. 
+The frequency plot shown in figure \ref{fig:viv2dof_f} confirms the frequency lock-in occurrence. 
+As shown in figure \ref{fig:viv2dof_xy} and \ref{fig:viv2dof_Vc}, 
+similar suppression is achieved for the 2-DOF VIV
+system with the same controller designed for 1-DOF VIV 
+system (figure \ref{fig:viv_cl_y_uc}). As compared with 1-DOF, which requires maximum $V_c \approx 2.91$, 
+the same controller requires maximum $V_c \approx 3.0$ for 2-DOF VIV saturated response suppression or approximately
+$3 \%$ larger than its 1-DOF VIV counterpart. 
+Figure \ref{fig:viv2dof_vor} further illustrates the similar flow field evolution during the suppression process for 
+the 2-DOF system. Overall, the results suggest the proposed feedback control scheme based on vertical blowing/suction 
+is able to suppress 2-DOF VIV system effectively with approximately the same amount of control energy as 1-DOF system. 
+%
+
+The control input is summarized in table \ref{tab:summary} for a stationary cylinder and VIV configurations with both 1-DOF and 2-DOF  response at $c=10^3$. 
+As shown in the table, 2-DOF VIV system only requires slightly larger control energy to suppress the saturated VIV state than its 1-DOF counterpart. 
+The results suggest that the transverse response is the most dynamically significant for the isolated circular cylinder VIV system. 
+Therefore, the proposed controller designed for 1-DOF VIV system can be applied to reduce 2-DOF VIV response. 
+
+\section{Concluding remarks}\label{sec:concluding}
+Through the ERA-based dimensionality reduction, an active feedback blowing 
+and suction concept is proposed to suppress the vortex street and VIV for 
+flexibly mounted structures.
+A variational finite element formulation has been considered for the full order 
+fluid-structure model and the generalized eigenvalue problem of 
+linearized Navier-Stokes system.
+The control scheme relies on the optimal feedback gain by the LQR synthesis and the state estimation by 
+the Kalman filter.
+% AFBS based on linear optimal control theory works (VIV has linear elements)
+Based on the combined vertical blowing and suction,
+we employed the feedback control to obtain suitable gains that stabilize the wake instability 
+and the vortex-induced vibration. 
+%We discussed the canonical vortex shedding problem of moving the poles
+%to the left-half of the complex plane and computed the system response for each case.  
+We found that the essential elements in the self-sustaining VIV process are linear, 
+and are subject to the active feedback control.
+From the ERA-based computations and feedback control of unstable eigenmodes, 
+it can be deduced that the increase in the VIV amplitude of cylinder occurs primarily through the linear instability process. 
+%  comparison between different BS configuration 
+
+By applying the AFBS procedure to the vortex shedding of stationary cylinder, we
+observed a remarkable reduction in the time-dependent fluctuating
+components of both  lift and drag forces. 
+By means of eigenspectrum distributions via ERA-based simulations, 
+we have explored several configurations to 
+confirm the generality and sensitivity of the AFBS procedure 
+with respect to a range of parameters.
+While the configuration BS0 with six actuation slots 
+performed efficiently, followed by $BS1$, $BS3$, the configuration 
+$BS2$ exhibited a poor performance as having the actuators in the leeward side of cylinder.
+% angle effect 
+In general, the performance of $BS0$ configurations is not much sensitive to the jet angle $\theta$. When applying for 
+nonlinear saturated state, the similar suppression is achieved with $\theta=(30 \degree, 45 \degree, 60 \degree)$,
+while a slightly larger overshot is found when the controller is switched on for the angle $\theta=60 \degree$. 
+% independent control velocity 
+The performance of $BS0$ becomes less effective when removing the same control 
+input velocity constraint, thereby suggesting an improved 
+performance of combined control architecture than 
+the decoupled independently designed control system. 
+% VIV suppression 
+
+With respect to the VIV suppression, the designed controller has performed 
+well for a range of mass ratio $m^* \in [5,100]$  and 
+the reduced natural structural frequency $F_s \in [0.005,0.5]$ at $Re=60$.
+% Quantify energy input for VIV as compared to stationary
+In contrast to the stationary vortex shedding, the suppression of VIV requires 
+about four times large control input for the same Reynolds number $Re=60$ 
+to suppress both the fluctuating lift and the VIV amplitude. 
+The controller designed for transversely VIV 
+system can be also adapted to 2-DOF VIV suppression 
+with only approximately $3 \%$ larger control input than
+the transverse 1-DOF VIV system. 
+%
+Since the present reduced-order model does not require any adjoint solver, 
+the proposed ERA-based feedback control can be directly used for actual 
+physical problem and experimental setting.
+The ERA-based ROM approach is relatively straightforward and computationally efficient.
+Furthermore the model offers a reasonably accuracy for the development of stabilized feedback controller design for unstable flows and VIV.
+% Future
+Three-dimensional and high $Re$ flows will be of interest for future study.
+
+The first author would like to thank Singapore Maritime Institute Grant (SMI-2014-OF-04) 
+for the financial support.
+\bibliographystyle{jfm}
+\bibliography{refs}
+
+\end{document}
